@@ -6,7 +6,7 @@
 
 #include <Arduino.h>
 
-#define LED 12
+#define LED 13
 
 void setup()
 {
