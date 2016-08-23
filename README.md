@@ -1,6 +1,6 @@
 ## Intro
 
-This is a workshop material for the IoT hand-on training. The training was first done at the [TWF 2016 Conference](http://conference2016.twf.community/#/workshop/0).
+Workshop materials for the IoT hand-on training. The training was first done at the [TWF 2016 Conference](http://twf.community).
 If any questions please email me.
 
 #### Resources
@@ -50,11 +50,17 @@ The training requires these parts:
 
 ## 01_blink
 
-This is a traditional *Hello World* sample for the *ESP8266* board and *Arduino* framework.
+This is a traditional *Hello World* sample for the *ESP8266* board and *Arduino* framework. The sample turns on/off a LED using a GPIO pin.
 
-First lets connect the hardware...
+#### Objectives
+* Learn to use PlatformIO.
+* Understand the basic program structure.
+* Learn how to connect ESP8266 and how to flash it.
+* Learn how to use GPIO pins to drive a LED.
 
 #### Hardware
+
+First lets connect the hardware...
 
 ![alt text](01_blink_bb.png "Bread board for 01_blink sample")
 
@@ -119,11 +125,11 @@ The `#include <Arduino.h>` brings in all the Arduino framework functions.
 
 ### 02_blink_SOS
 
-This an example for solving exercise *##1* from the *01_blink* section.
+This an example for solving exercise *#1* from the *01_blink* section.
 
 ### 03_blink_3LED
 
-This an example for solving exercise *##2* from the *01_blink* section.
+This an example for solving exercise *#2* from the *01_blink* section.
 
 ### 04_wifi
 
