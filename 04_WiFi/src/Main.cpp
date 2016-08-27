@@ -3,12 +3,14 @@
  */
 
 #include <Arduino.h>
+// reference the ESP WiFi headers
 #include <ESP8266WiFi.h>
 
 #define STATUS_LED 13
 
-const char* ssid     = "(network ssid here)";
-const char* password = "(network password here)";
+// update with you network SSID and password
+const char* ssid     = "IoT_Network";
+const char* password = "IoT_Password";
 
 void connectToNetwork() {
   Serial.println();
@@ -30,23 +32,21 @@ void connectToNetwork() {
 
 void setup()
 {
-  // Connect the serial port port.
+  // connect the serial port
   Serial.begin(115200);
-  delay(50);
 
-  // initialize LED digital pin as an output.
   pinMode(STATUS_LED, OUTPUT);
-  // the LED will signal if we're connected to WiFi
+  // LED off - will indicate we're not connected to WiFi yet
   digitalWrite(STATUS_LED, LOW);
 
   connectToNetwork();
 
-  // the LED will indicate that we're connected
+  // LED on - will indicate that we're connected
   digitalWrite(STATUS_LED, HIGH);
 
   // print the IP address
-  Serial.println("IP address: ");
   IPAddress ip = WiFi.localIP();
+  Serial.println("IP address: ");
   Serial.println(ip);
 
   // print the MAC address
@@ -54,12 +54,12 @@ void setup()
   WiFi.macAddress(mac);
   Serial.println("MAC address: ");
   for (int i = 5; i >= 0; i--)
-  {
     Serial.print(mac[i], HEX);
-  }
+
   Serial.println("");
 }
 
 void loop()
 {
+  delay(50);
 }
