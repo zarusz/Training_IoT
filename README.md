@@ -62,7 +62,7 @@ TBD
 ## Essentials
 
 ### Boot Modes
-Whenever the ESP is reset or powered on it checks the state of three GPIO pins to enters one of the boot modes:
+Whenever the ESP is reset or powered on it checks the state of three GPIO pins to enter one of the boot modes:
 
 GPIO15|GPIO0|GPIO2|Mode
 ------|-----|-----|----
@@ -78,7 +78,7 @@ At startup ESP prints out the current boot mode:
 rst cause:2, boot mode:(3,6)
 ```
 
-More details is provided on the [ESP Arduino wiki](https://github.com/esp8266/Arduino/blob/master/doc/boards.md#boot-messages-and-modes).
+More details are provided on the [ESP Arduino wiki](https://github.com/esp8266/Arduino/blob/master/doc/boards.md#boot-messages-and-modes).
 
 ## Instructions
 
@@ -193,11 +193,18 @@ When all is successful the LED will blink and the output from the *Serial Monito
 
 This an example for solving exercise *#2* from the *01_Blink* section.
 
+#### Objectives
+* Exercise the program upload
+
 ### 03_Blink_3LED
 
 This an example for solving exercise *#3* from the *01_Blink* section.
 
 ![Schematic 03_blink_3LED sample](assets/03_blink_3LED.jpg "Schematic for 03_blink_3LED sample")
+
+#### Objectives
+* Exercise the program upload
+* Exercise the LED connection
 
 ### 04_WiFi
 
@@ -276,7 +283,7 @@ void loop()
 
 When the program runs the *Serial Monitor* outputs:
 
-![Serial Monitor Output](assets/04_wifi_serial_monitor.png "Serial Monitor Output")
+![](assets/04_wifi_serial_monitor.png "Serial Monitor Output")
 
 #### Arduino Reference
 * [`WiFi.begin()`](https://www.arduino.cc/en/Reference/WiFiBegin)
