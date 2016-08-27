@@ -182,6 +182,7 @@ When all is successful the LED will blink and the output from the *Serial Monito
 #### Worth reading (at home)
 
 * [Diode and LED Polarity](https://learn.sparkfun.com/tutorials/polarity/diode-and-led-polarity)
+* [Serial Reference](https://www.arduino.cc/en/Reference/Serial)
 
 #### Exercise
 
@@ -206,7 +207,7 @@ This an example for solving exercise *#2* from the *01_Blink* section.
 
 This an example for solving exercise *#3* from the *01_Blink* section.
 
-![Schematic 03_blink_3LED sample](assets/03_blink_3LED.jpg "Schematic for 03_blink_3LED sample")
+![](assets/03_blink_3LED.jpg "Schematic for 03_blink_3LED sample")
 
 #### Objectives
 * Exercise the program upload
@@ -219,7 +220,7 @@ ESP8266 has a built in WiFi module. We can interface with it using the WiFi libr
 * client,
 * mixed (both AP and client).
 
-This sample connects to the specified secured network and prints out the IP/MAC address of the ESP. It also uses a LED to indicate the connection status - when lit the WiFi connection is established.
+This sample program connects to the specified secured network and prints out the IP/MAC address of the ESP (client WiFi mode). It also uses a LED to indicate the connection status - when lit the WiFi connection is established.
 
 Here is the program:
 
@@ -298,33 +299,32 @@ E42D897FCF5C
 ```
 
 #### Arduino Reference
-* [`WiFi.begin()`](https://www.arduino.cc/en/Reference/WiFiBegin)
-* [`WiFi.status()`](https://www.arduino.cc/en/Reference/WiFiStatus)
-* [`WiFi.localIP()`](https://www.arduino.cc/en/Reference/WiFiLocalIP)
-* [`WiFi.macAddress()`](https://www.arduino.cc/en/Reference/WiFiMACAddress)
+* [WiFi.begin()](https://www.arduino.cc/en/Reference/WiFiBegin)
+* [WiFi.status()](https://www.arduino.cc/en/Reference/WiFiStatus)
+* [WiFi.localIP()](https://www.arduino.cc/en/Reference/WiFiLocalIP)
+* [WiFi.macAddress()](https://www.arduino.cc/en/Reference/WiFiMACAddress)
 
 #### Worth reading at home
 * [WiFi Library (Arduino)](https://www.arduino.cc/en/Reference/WiFi)
-* [ESP Arduino Examples on GitHub](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples)
-* [Serial Reference](https://www.arduino.cc/en/Reference/Serial)
+* [ESP-Arduino Examples for WiFi](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples)
 
 ### 05_RemoteControl
 
 The example consists of two apps:
 * client: ESP device with a connected LED (C++)
-* server: WebApp that controls the LED remotely (C#, ASP.NET, Web)
+* server: Web app that controls the LED remotely (C#, ASP.NET, Web)
 
-This example shows how to communicate with a remote host over TCP/IP. Specifically the client (ESP device) will connect with the remote web app over HTTP and pull the device state ([long polling](https://en.wikipedia.org/wiki/Push_technology#Long_polling)).
+This example shows how to communicate with a remote host over TCP/IP from the ESP device. Specifically the client device will connect with the remote web app over *HTTP* and pull the device state ([long polling](https://en.wikipedia.org/wiki/Push_technology#Long_polling)).
 This minimal setup will allow us to drive a LED on the ESP device remotely (e.g. from outside of the building).
 
 Here is the conceptual diagram:
 
 ToDo: diagram needed
 
-We need to agree on the communication scheme between the ESP device and our WebApp:
+We need to agree on the communication scheme between the ESP device and our web app:
 * *HTTP* protocol will be used as transport layer
 * The device will pull the LED state (on/off state) every second from the server.
-* The device will know the host of the WebApp
+* The device will know the host of the web app
 * The LED state will be represented as character `0` for off and `1` for on.
 
 Lets start with the web app first...
@@ -343,15 +343,16 @@ The WebApp exposes two *RESTful* methods:
 The ESP device will use the #1st method to pull the state.
 Notice that the WebApp does not know about the devices until they first connect via the *RESTful API* (#1st method).
 
-The WebApp has been deployed to an Azure Website: http://iot-remotecontrolapp.azurewebsites.net. We can use it for testing:
-0. Fetch the state of `my_device_id` device from the test server:
-1. http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
-2. Returns: `0`
-3. We can now set the state to `1`:
-4. http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/?state=1
-5. Then a call to
-6. http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
-7. Returns: `1`
+The web app has been deployed to an Azure Website: http://iot-remotecontrolapp.azurewebsites.net. We can use it for testing:
+
+1. Fetch the state of `my_device_id` device from the test server:
+	* http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
+	* Returns: `0`
+2. We can now set the state to `1`:
+  * http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/?state=1
+3. Then a call to:
+ 	* http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
+ 	* Returns: `1`
 
 The rest of the WebApp is not that interesting, so let's move on to the client device (ESP).
 
@@ -359,9 +360,9 @@ The rest of the WebApp is not that interesting, so let's move on to the client d
 
 ToDo
 
-In the sample we have used the `HTTPClient` which makes it easy to work with `HTTP` protocol. ESP Arduino also makes it possible to use the low level *Socket* API (see [`WiFiClient`](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient)).
+In the sample we have used the `HTTPClient` which makes it easy to work with *HTTP* protocol. ESP-Arduino also makes it possible to use the low level *TCP/IP Socket* interface (see [`WiFiClient`](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient)).
 
-When the program starts it pulls the device state from the test WebApp. Any change done in the WebApp is also reflected in the device's LED:
+When the program starts it pulls the device state from the WebApp. Any change done in the WebApp is also reflected in the device's LED:
 ```
 Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
 [HTTP] GET... code: 200
@@ -386,13 +387,20 @@ WiFi not connected.
 WiFi not connected.
 ```
 
-Then when you plug it in again it will work fine again. The `WiFi` class joins the network once available.  
+Then when you plug the router in the program will work fine again. The `WiFi` class joins the network once available.  
 
 #### Reference
 
 * [`HTTPClient` Examples (ESP Arduino)](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266HTTPClient)
 * [`WiFiClient` Examples (ESP Arduino)](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient)
 * [`WiFiClient` Arduino Reference](https://www.arduino.cc/en/Reference/WiFiClient)
+
+#### Improvements
+
+This is the first useful example of an IoT system. Yet its trivial and has many limitations:
+* The long polling communication does not scale when more devices are connected. We will look at alternatives later.
+* The security is poor. Anyone could easily drive our LED.
+* While the LED state representation on-the-wire is simple it will not scale when we add more elements to our device.   
 
 ### TODO Next example
 
