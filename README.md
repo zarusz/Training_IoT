@@ -96,7 +96,7 @@ This is a traditional *Hello World* sample for the *ESP8266* board and *Arduino*
 
 First lets connect the hardware...
 
-![Schematic 01_Blink sample](assets/01_blink_bb.png "Schematic for 01_blink sample")
+![](assets/01_blink_bb.png "Schematic for 01_blink sample")
 
 Connections of ESP8266 pins:
 * `RST` of ESP8266 connected via a push switch to `LOW`.
@@ -106,7 +106,9 @@ Connections of ESP8266 pins:
   * *Sleep mode* is used to lower the power consumption.
 * `GND` and `3V3` is connected to `GND` and voltage `3.3V` respectively.      
 
-The sample program will blink a LED. The LED's anode (shorter leg) is connected to `GND`, the cathode is connected via a 220&#937; resistor to the GPIO pin `#13`. The resistor is needed to limit the current on the LED (not to burn it).
+The sample program will blink a LED. The LED's cathode (shorter leg) is connected to `GND` and the anode is connected via a 220&#937; resistor to the GPIO pin `#13`. The resistor is needed to limit the current on the LED (not to burn it).
+
+![](assets/diode_a_sm.png "Schematic for 01_blink sample")
 
 #### Software
 
@@ -176,6 +178,10 @@ When all is successful the LED will blink and the output from the *Serial Monito
 * [`loop()`](https://www.arduino.cc/en/Reference/Loop)
 * [`Serial.begin()`](https://www.arduino.cc/en/Serial/Begin)
 * [`Serial.print()`](https://www.arduino.cc/en/Serial/Print)
+
+#### Worth reading (at home)
+
+* [Diode and LED Polarity](https://learn.sparkfun.com/tutorials/polarity/diode-and-led-polarity)
 
 #### Exercise
 
@@ -282,8 +288,14 @@ void loop()
 ```
 
 When the program runs the *Serial Monitor* outputs:
-
-![](assets/04_wifi_serial_monitor.png "Serial Monitor Output")
+```
+Connecting to IoT_Network
+..
+WiFi connected
+IP address:
+192.168.2.148
+E42D897FCF5C
+```
 
 #### Arduino Reference
 * [`WiFi.begin()`](https://www.arduino.cc/en/Reference/WiFiBegin)
@@ -295,6 +307,92 @@ When the program runs the *Serial Monitor* outputs:
 * [WiFi Library (Arduino)](https://www.arduino.cc/en/Reference/WiFi)
 * [ESP Arduino Examples on GitHub](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples)
 * [Serial Reference](https://www.arduino.cc/en/Reference/Serial)
+
+### 05_RemoteControl
+
+The example consists of two apps:
+* client: ESP device with a connected LED (C++)
+* server: WebApp that controls the LED remotely (C#, ASP.NET, Web)
+
+This example shows how to communicate with a remote host over TCP/IP. Specifically the client (ESP device) will connect with the remote web app over HTTP and pull the device state ([long polling](https://en.wikipedia.org/wiki/Push_technology#Long_polling)).
+This minimal setup will allow us to drive a LED on the ESP device remotely (e.g. from outside of the building).
+
+Here is the conceptual diagram:
+
+ToDo: diagram needed
+
+We need to agree on the communication scheme between the ESP device and our WebApp:
+* *HTTP* protocol will be used as transport layer
+* The device will pull the LED state (on/off state) every second from the server.
+* The device will know the host of the WebApp
+* The LED state will be represented as character `0` for off and `1` for on.
+
+Lets start with the web app first...
+
+#### 05_RemoteControl_App - control web app
+
+The WebApp exposes two *RESTful* methods:
+
+1. `http://{host}/api/device/{device_id}/state`
+	* Responds with the {state} of the device `{my_device_id}`.
+	* The response is `plain/text` encoded in `ASCII`.
+	* The values returned will be - either `0` or `1`.
+2. `http://{host}/api/device/{device_id}/?state={state}`
+	* Allows us to set the `{state}` for `{my_device_id}`.  
+
+The ESP device will use the #1st method to pull the state.
+Notice that the WebApp does not know about the devices until they first connect via the *RESTful API* (#1st method).
+
+The WebApp has been deployed to an Azure Website: http://iot-remotecontrolapp.azurewebsites.net. We can use it for testing:
+0. Fetch the state of `my_device_id` device from the test server:
+1. http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
+2. Returns: `0`
+3. We can now set the state to `1`:
+4. http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/?state=1
+5. Then a call to
+6. http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
+7. Returns: `1`
+
+The rest of the WebApp is not that interesting, so let's move on to the client device (ESP).
+
+#### 05_RemoteControl - client device
+
+ToDo
+
+In the sample we have used the `HTTPClient` which makes it easy to work with `HTTP` protocol. ESP Arduino also makes it possible to use the low level *Socket* API (see [`WiFiClient`](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient)).
+
+When the program starts it pulls the device state from the test WebApp. Any change done in the WebApp is also reflected in the device's LED:
+```
+Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
+[HTTP] GET... code: 200
+Response:
+0
+Closing connection
+
+Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
+[HTTP] GET... code: 200
+Response:
+1
+Closing connection
+```
+
+Note that the program checks if the WiFi network is disconnected. When the WiFi router is unplugged:
+```
+Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
+[HTTP] GET... failed, error: connection refused
+Closing connection
+
+WiFi not connected.
+WiFi not connected.
+```
+
+Then when you plug it in again it will work fine again. The `WiFi` class joins the network once available.  
+
+#### Reference
+
+* [`HTTPClient` Examples (ESP Arduino)](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266HTTPClient)
+* [`WiFiClient` Examples (ESP Arduino)](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient)
+* [`WiFiClient` Arduino Reference](https://www.arduino.cc/en/Reference/WiFiClient)
 
 ### TODO Next example
 
