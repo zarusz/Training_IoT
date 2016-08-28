@@ -331,7 +331,8 @@ Lets start with the web app first...
 
 #### 05_RemoteControl_App - control web app
 
-The WebApp exposes two *RESTful* methods:
+Folder `05_RemoteControl_App` contains an *ASP.NET* project.
+The web app exposes two *RESTful* methods:
 
 1. `http://{host}/api/device/{device_id}/state`
 	* Responds with the {state} of the device `{my_device_id}`.
@@ -341,7 +342,7 @@ The WebApp exposes two *RESTful* methods:
 	* Allows us to set the `{state}` for `{my_device_id}`.  
 
 The ESP device will use the #1st method to pull the state.
-Notice that the WebApp does not know about the devices until they first connect via the *RESTful API* (#1st method).
+Notice that the web app does not know about the devices until they first connect.
 
 The web app has been deployed to an Azure Website: http://iot-remotecontrolapp.azurewebsites.net. We can use it for testing:
 
@@ -354,15 +355,81 @@ The web app has been deployed to an Azure Website: http://iot-remotecontrolapp.a
  	* http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
  	* Returns: `1`
 
-The rest of the WebApp is not that interesting, so let's move on to the client device (ESP).
+The web app also has a simple [user interface](http://iot-remotecontrolapp.azurewebsites.net). From the top menu we can navigate *Devices > my_device_id* to open the device control page:
+
+![](assets/05_control_webapp.png "Control user interface for my_device_id")
+
+
+The rest of the web app is not that interesting, so let's move on to the client device (ESP).
 
 #### 05_RemoteControl - client device
 
 ToDo
 
-In the sample we have used the `HTTPClient` which makes it easy to work with *HTTP* protocol. ESP-Arduino also makes it possible to use the low level *TCP/IP Socket* interface (see [`WiFiClient`](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient)).
+The crux of the sample is the `HTTPClient` class. It makes working with *HTTP* protocol easy. The class provides a higher abstraction over the low level *TCP/IP Socket* interface ( [`WiFiClient`](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient) class).
 
-When the program starts it pulls the device state from the WebApp. Any change done in the WebApp is also reflected in the device's LED:
+```cpp
+bool TryGetDeviceState(String& payload)
+{
+  bool success = false;
+  String url = String("http://") + server_host + "/api/device/" + device_id + "/state";
+  Serial.print("Connecting to ");
+  Serial.println(url);
+
+  HTTPClient http;
+  http.begin(url);
+
+  int httpCode = http.GET();
+  if (httpCode > 0)
+  {
+    // HTTP header has been send and Server response header has been handled
+    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+
+    // file found at server
+    if (httpCode == HTTP_CODE_OK)
+    {
+      payload = http.getString();
+      Serial.println("Response:");
+      Serial.println(payload);
+      success = true;
+    }
+  }
+  else
+  {
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+
+  http.end();
+
+  Serial.println("Closing connection");
+  Serial.println();
+  return success;
+}
+```
+
+When the program starts it pulls the device state from the web app.
+
+```cpp
+void loop()
+{
+  // wait for WiFi connection
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    String payload;
+    if (TryGetDeviceState(payload))
+    {
+      digitalWrite(STATUS_LED, payload == "1" ? HIGH : LOW);
+    }
+  }
+  else
+  {
+    Serial.println("WiFi not connected.");
+  }
+  delay(2000);
+}
+```
+
+Any change done in the web app will eventually be reflected in the device's LED:
 ```
 Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
 [HTTP] GET... code: 200
@@ -377,7 +444,7 @@ Response:
 Closing connection
 ```
 
-Note that the program checks if the WiFi network is disconnected. When the WiFi router is unplugged:
+Note that the program checks if the WiFi network is disconnected. For example when the WiFi router is unplugged:
 ```
 Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
 [HTTP] GET... failed, error: connection refused
@@ -387,7 +454,7 @@ WiFi not connected.
 WiFi not connected.
 ```
 
-Then when you plug the router in the program will work fine again. The `WiFi` class joins the network once available.  
+However, when you plug the router back the program will work fine again. The `WiFi` class automatically joins the network once available.  
 
 #### Reference
 
@@ -399,8 +466,8 @@ Then when you plug the router in the program will work fine again. The `WiFi` cl
 
 This is the first useful example of an IoT system. Yet its trivial and has many limitations:
 * The long polling communication does not scale when more devices are connected. We will look at alternatives later.
-* The security is poor. Anyone could easily drive our LED.
-* While the LED state representation on-the-wire is simple it will not scale when we add more elements to our device.   
+* The security is poor. Since the communication is exposed on the Internet anyone could easily drive our LED.
+* While the LED state representation on-the-wire is simple its not extensible when we add more elements to our device.
 
 ### TODO Next example
 
@@ -408,7 +475,7 @@ TODO
 
 ## Extras
 
-### Exeptions
+### Exceptions
 
 Sometime the program causes runtime errors that cause the chip to reboot and enter invalid state. ESP provides some diagnostic information when an error happens:
 

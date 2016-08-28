@@ -1,89 +1,21 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Data.Odbc;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Web.Http;
+using TrainingIoT.RemoteControl.App.Services;
 
 namespace TrainingIoT.RemoteControl.App.Controllers
 {
-    public class DeviceState
-    {
-        public bool LedOn { get; set; }
-    }
-
-    public class Device
-    {
-        public string DeviceId { get; set; }
-        public DeviceState State { get; set; }
-    }
-
-    public class DeviceStateSerializer
-    {
-        public string Serialize(DeviceState deviceState)
-        {
-            return deviceState.LedOn ? "1" : "0";
-        }
-
-        public DeviceState Deserialize(string serial)
-        {
-            var ds = new DeviceState {LedOn = serial == "1"};
-            return ds;
-        }
-    }
-
-    public interface IDeviceRepository
-    {
-        ICollection<Device> FindAll(); 
-        Device FindById(string deviceId);
-        void Save(Device device);
-    }
-
-    public class MemoryDeviceRepository : IDeviceRepository
-    {
-        private readonly ConcurrentDictionary<string, Device> _deviceStateById = new ConcurrentDictionary<string, Device>();
-
-        #region Implementation of IDeviceRepository
-
-        public ICollection<Device> FindAll()
-        {
-            return new List<Device>(_deviceStateById.Values);
-        }
-
-        public Device FindById(string deviceId)
-        {
-            Device device;
-            if (_deviceStateById.TryGetValue(deviceId, out device))
-            {
-                return device;
-            }
-            return null;
-        }
-
-        public void Save(Device device)
-        {
-            _deviceStateById[device.DeviceId] = device;
-        }
-
-        #endregion
-
-        public static readonly MemoryDeviceRepository Instance = new MemoryDeviceRepository();
-    }
-
-
     [RoutePrefix("api/Device")]
     public class DeviceController : ApiController
     {
         private readonly IDeviceRepository _deviceRepository;
         private readonly DeviceStateSerializer _deviceStateSerializer;
 
-        public DeviceController()
+        public DeviceController(IDeviceRepository deviceRepository, DeviceStateSerializer deviceStateSerializer)
         {
-            _deviceRepository = MemoryDeviceRepository.Instance;
-            _deviceStateSerializer = new DeviceStateSerializer();
+            _deviceRepository = deviceRepository;
+            _deviceStateSerializer = deviceStateSerializer;
         }
 
         [HttpGet]
