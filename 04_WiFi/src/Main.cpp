@@ -43,13 +43,9 @@ void printWiFiDetails()
   Serial.println(gatewayIp);
 
   // print the MAC address
-  byte mac[6];
-  WiFi.macAddress(mac);
+  String mac = WiFi.macAddress();
   Serial.print("MAC: ");
-  for (int i = 5; i >= 0; i--)
-    Serial.print(mac[i], HEX);
-
-  Serial.println("");
+  Serial.println(mac);
 }
 
 void setup()

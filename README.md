@@ -215,10 +215,10 @@ This an example for solving exercise *#3* from the *01_Blink* section.
 
 ### 04_WiFi
 
-ESP8266 has a built in WiFi module. We can interface with it using the WiFi library. The ESP WiFi can work in one of the 3 modes:
-* access point,
-* client,
-* mixed (both AP and client).
+ESP8266 has a built in WiFi module. We can interface with it using the [WiFi](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/station-class.md#station-class) class. The ESP WiFi can work in one of the 3 modes:
+* soft access point (AP),
+* station (STA),
+* mixed (both software AP and station).
 
 This sample program connects to the specified secured network and prints out the IP/MAC address of the ESP (client WiFi mode). It also uses a LED to indicate the connection status - when lit the WiFi connection is established.
 
@@ -266,13 +266,9 @@ void printWiFiDetails()
   Serial.println(gatewayIp);
 
   // print the MAC address
-  byte mac[6];
-  WiFi.macAddress(mac);
+  String mac = WiFi.macAddress();
   Serial.print("MAC: ");
-  for (int i = 5; i >= 0; i--)
-    Serial.print(mac[i], HEX);
-
-  Serial.println("");
+  Serial.println(mac);
 }
 
 void setup()
@@ -311,7 +307,7 @@ Connecting to IoT_Network
 WiFi connected
 IP: 192.168.2.148
 Gateway: 192.168.2.1
-MAC: E42D897FCF5C
+MAC: 5C:CF:7F:89:2D:E4
 ```
 
 Note that the program checks if the WiFi network is disconnected.
@@ -321,17 +317,19 @@ WiFi not connected.
 WiFi not connected.
 ```
 
-However, when you plug the router back the `WiFi` class automatically joins the network and LED turns on.  
+However, when you plug the router back the `WiFi` class automatically joins the network and LED turns on (see [`WiFi.setAutoConnect()`](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/station-class.md#setautoconnect)).
 
-#### Arduino Reference
-* [WiFi.begin()](https://www.arduino.cc/en/Reference/WiFiBegin)
-* [WiFi.status()](https://www.arduino.cc/en/Reference/WiFiStatus)
-* [WiFi.localIP()](https://www.arduino.cc/en/Reference/WiFiLocalIP)
-* [WiFi.macAddress()](https://www.arduino.cc/en/Reference/WiFiMACAddress)
+#### Reference
+* [WiFi.begin()](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/station-class.md#begin)
+* [WiFi.status()](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/station-class.md#status)
+* [WiFi.localIP()](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/station-class.md#localip)
+* [WiFi.gatewayIP()](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/station-class.md#gatewayip)
+* [WiFi.macAddress()](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/station-class.md#macaddress)
 
 #### Worth reading at home
+* [ESP-Arduino WiFi Docs](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/station-class.md)
+* [ESP-Arduino WiFi Examples](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples)
 * [WiFi Library (Arduino)](https://www.arduino.cc/en/Reference/WiFi)
-* [ESP-Arduino Examples for WiFi](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples)
 
 ### 05_RemoteControl
 
@@ -391,7 +389,7 @@ The web app is not that interesting, so let's move on to the client device (ESP)
 
 The hardware setup should be the same as in [01_Blink](#01_blink) sample (ESP with LED).
 
-The crux of the sample is the usage of `HTTPClient` class. It makes working with *HTTP* protocol easy. The class provides a higher abstraction over the low level *TCP/IP Socket* interface ( [`WiFiClient`](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient) class).
+The crux of the sample is the usage of `HTTPClient` class. It makes working with *HTTP* protocol easy. The class provides a higher abstraction over the low level *TCP/IP Socket* interface (`WiFiClient` class).
 
 ```cpp
 bool tryGetDeviceState(String& payload)
@@ -470,9 +468,13 @@ Closing connection
 
 #### Reference
 
-* [`HTTPClient` Examples (ESP Arduino)](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266HTTPClient)
-* [`WiFiClient` Examples (ESP Arduino)](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient)
-* [`WiFiClient` Arduino Reference](https://www.arduino.cc/en/Reference/WiFiClient)
+* [`HTTPClient` examples (ESP-Arduino)](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/client-examples.md)
+* [`WiFiClient` reference](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/client-class.md)
+* [`WiFiClient` examples (ESP-Arduino)](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient)
+* [`WiFiClientSecure` reference](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/client-secure-class.md)
+
+#### Worth reading (at home)
+* [ESP8266WiFi](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/readme.md)
 
 #### Improvements
 
@@ -480,6 +482,63 @@ This is the first useful example of an IoT system. Yet its trivial and has many 
 * The long polling communication does not scale when more devices are connected. We will look at alternatives later.
 * The security is poor. Since the communication is exposed on the Internet anyone could easily drive our LED.
 * While the LED state representation on-the-wire is simple its not extensible when we add more elements to our device.
+
+### 06_RemoteControl_JSON
+
+The previous example used plain text to transmit the LED state (`0` or `1`). This format does not easily extend when time comes to add more points of control or transmit sensor readings.
+
+Lets look at using [JSON](https://pl.wikipedia.org/wiki/JSON) to represent the format of message communication.
+
+Also for future extensibility we need to reflect on the message types and communication scheme. We surely need a way to handle more than just one LED. Also in the future we will want to handle stuff like IR transcievers or temperature sensors.
+
+Since each of our IoT devices can have different sensors we also need a way to send this description information across to the control app, so that it knows what can it do with the device.
+
+This JSON message can describe a device which has 2 LEDs and 1 switch:
+```json
+{
+	"device_id": "my_device_id",
+	"features": [
+		{
+			"type": "led",
+			"port": 1
+		},
+		{
+			"type": "led",
+			"port": 2
+		},
+		{
+			"type": "switch",
+			"port": 3
+		}
+	]
+}
+```
+
+This message could be sent from the control app to turn the switch on.
+```json
+{
+	"type": "switch",
+	"port": 3,
+	"on": true
+}
+```      
+
+Lets also introduce two REST API:
+
+1. /api/device/register
+	* The device would *HTTP POST* the device description (message #1).
+2. /api/device/{device_id}
+	* The device would *HTTP GET* the next command from the control app (message #2).
+
+We will start with the control app.
+
+#### 06_RemoteControl_JSON_App
+
+
+
+#### 06_RemoteControl_JSON
+
+ToDo
 
 ### TODO Next example
 
