@@ -22,8 +22,7 @@ const int server_port = 80;
 // update with a unique device id (only alphanumeric characters)
 const char* device_id = "my_device_id";
 
-void connectToNetwork() {
-  Serial.println();
+void connectWiFi() {
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
@@ -38,7 +37,7 @@ void connectToNetwork() {
 
   Serial.println("");
   Serial.println("WiFi connected");
-  Serial.println("IP address: ");
+  Serial.print("IP: ");
   Serial.println(WiFi.localIP());
 }
 
@@ -51,10 +50,10 @@ void setup()
   // initialize LED to off
   digitalWrite(STATUS_LED, LOW);
 
-  connectToNetwork();
+  connectWiFi();
 }
 
-bool TryGetDeviceState(String& payload)
+bool tryGetDeviceState(String& payload)
 {
   bool success = false;
   String url = String("http://") + server_host + "/api/device/" + device_id + "/state";
@@ -91,19 +90,19 @@ bool TryGetDeviceState(String& payload)
   return success;
 }
 
-void loop() {
-  // wait for WiFi connection
-  if (WiFi.status() == WL_CONNECTED)
-  {
-    String payload;
-    if (TryGetDeviceState(payload))
-    {
-      digitalWrite(STATUS_LED, payload == "1" ? HIGH : LOW);
-    }
-  }
-  else
+void loop()
+{
+  if (WiFi.status() != WL_CONNECTED)
   {
     Serial.println("WiFi not connected.");
+    delay(1000);
+    return;
+  }
+
+  String payload;
+  if (tryGetDeviceState(payload))
+  {
+    digitalWrite(STATUS_LED, payload == "1" ? HIGH : LOW);
   }
   delay(2000);
 }

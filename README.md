@@ -235,8 +235,7 @@ Here is the program:
 const char* ssid     = "IoT_Network";
 const char* password = "IoT_Password";
 
-void connectToNetwork() {
-  Serial.println();
+void connectWiFi() {
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
@@ -244,7 +243,8 @@ void connectToNetwork() {
   // Connect to a WiFi network
   WiFi.begin(ssid, password);
   // Wait until the connection is established
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
@@ -253,38 +253,54 @@ void connectToNetwork() {
   Serial.println("WiFi connected");
 }
 
-void setup()
+void printWiFiDetails()
 {
-  // connect the serial port
-  Serial.begin(115200);
-
-  pinMode(STATUS_LED, OUTPUT);
-  // LED off - will indicate we're not connected to WiFi yet
-  digitalWrite(STATUS_LED, LOW);
-
-  connectToNetwork();
-
-  // LED on - will indicate that we're connected
-  digitalWrite(STATUS_LED, HIGH);
-
   // print the IP address
   IPAddress ip = WiFi.localIP();
-  Serial.println("IP address: ");
+  Serial.print("IP: ");
   Serial.println(ip);
+
+  // print the gateway address:
+  IPAddress gatewayIp = WiFi.gatewayIP();
+  Serial.print("Gateway: ");
+  Serial.println(gatewayIp);
 
   // print the MAC address
   byte mac[6];
   WiFi.macAddress(mac);
-  Serial.println("MAC address: ");
+  Serial.print("MAC: ");
   for (int i = 5; i >= 0; i--)
     Serial.print(mac[i], HEX);
 
   Serial.println("");
 }
 
+void setup()
+{
+  // connect the serial port
+  Serial.begin(115200);
+
+  // initialize the status LED
+  pinMode(STATUS_LED, OUTPUT);
+
+  connectWiFi();
+  printWiFiDetails();
+}
+
 void loop()
 {
-	delay(50);
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    // LED off - indicate that we are not connected
+    digitalWrite(STATUS_LED, LOW);
+
+    Serial.println("WiFi not connected.");
+    delay(1000);
+    return;
+  }
+
+  // LED on - indicate that we are connected
+  digitalWrite(STATUS_LED, HIGH);
 }
 ```
 
@@ -293,10 +309,19 @@ When the program runs the *Serial Monitor* outputs:
 Connecting to IoT_Network
 ..
 WiFi connected
-IP address:
-192.168.2.148
-E42D897FCF5C
+IP: 192.168.2.148
+Gateway: 192.168.2.1
+MAC: E42D897FCF5C
 ```
+
+Note that the program checks if the WiFi network is disconnected.
+For example when the WiFi router is unplugged the LED becomes off and the program outputs:
+```
+WiFi not connected.
+WiFi not connected.
+```
+
+However, when you plug the router back the `WiFi` class automatically joins the network and LED turns on.  
 
 #### Arduino Reference
 * [WiFi.begin()](https://www.arduino.cc/en/Reference/WiFiBegin)
@@ -360,16 +385,16 @@ The web app also has a simple [user interface](http://iot-remotecontrolapp.azure
 ![](assets/05_control_webapp.png "Control user interface for my_device_id")
 
 
-The rest of the web app is not that interesting, so let's move on to the client device (ESP).
+The web app is not that interesting, so let's move on to the client device (ESP).
 
 #### 05_RemoteControl - client device
 
-ToDo
+The hardware setup should be the same as in [01_Blink](#01_blink) sample (ESP with LED).
 
-The crux of the sample is the `HTTPClient` class. It makes working with *HTTP* protocol easy. The class provides a higher abstraction over the low level *TCP/IP Socket* interface ( [`WiFiClient`](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient) class).
+The crux of the sample is the usage of `HTTPClient` class. It makes working with *HTTP* protocol easy. The class provides a higher abstraction over the low level *TCP/IP Socket* interface ( [`WiFiClient`](https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/examples/WiFiClient) class).
 
 ```cpp
-bool TryGetDeviceState(String& payload)
+bool tryGetDeviceState(String& payload)
 {
   bool success = false;
   String url = String("http://") + server_host + "/api/device/" + device_id + "/state";
@@ -407,23 +432,22 @@ bool TryGetDeviceState(String& payload)
 }
 ```
 
-When the program starts it pulls the device state from the web app.
+The program pulls the device state from the web app (every 2 seconds):
 
 ```cpp
 void loop()
 {
-  // wait for WiFi connection
-  if (WiFi.status() == WL_CONNECTED)
-  {
-    String payload;
-    if (TryGetDeviceState(payload))
-    {
-      digitalWrite(STATUS_LED, payload == "1" ? HIGH : LOW);
-    }
-  }
-  else
+	if (WiFi.status() != WL_CONNECTED)
   {
     Serial.println("WiFi not connected.");
+    delay(1000);
+    return;
+  }
+
+  String payload;
+  if (tryGetDeviceState(payload))
+  {
+    digitalWrite(STATUS_LED, payload == "1" ? HIGH : LOW);
   }
   delay(2000);
 }
@@ -443,18 +467,6 @@ Response:
 1
 Closing connection
 ```
-
-Note that the program checks if the WiFi network is disconnected. For example when the WiFi router is unplugged:
-```
-Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
-[HTTP] GET... failed, error: connection refused
-Closing connection
-
-WiFi not connected.
-WiFi not connected.
-```
-
-However, when you plug the router back the program will work fine again. The `WiFi` class automatically joins the network once available.  
 
 #### Reference
 
@@ -498,8 +510,8 @@ See the list of exceptions [Exception Causes (EXCCAUSE)](https://github.com/esp8
 ### Upgrading ESP to newer Espressif SDK
 
 To upgrade your ESP8266 with the latest firmware, you need:
-1. The [Flash Download Tool](ESP Flash Download Tool
-http://www.espressif.com/en/support/download/other-tools)
+
+1. The [Flash Download Tool](http://www.espressif.com/en/support/download/other-tools)
 2. The [official SDK](http://espressif.com/en/support/download/sdks-demos) from Espressif.
 
 Typically you will need the *NONOS* SDK. For example `ESP8266 NONOS SDK V1.5.4`.

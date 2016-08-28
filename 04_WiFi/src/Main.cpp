@@ -12,8 +12,7 @@
 const char* ssid     = "IoT_Network";
 const char* password = "IoT_Password";
 
-void connectToNetwork() {
-  Serial.println();
+void connectWiFi() {
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
@@ -21,7 +20,8 @@ void connectToNetwork() {
   // Connect to a WiFi network
   WiFi.begin(ssid, password);
   // Wait until the connection is established
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
@@ -30,36 +30,52 @@ void connectToNetwork() {
   Serial.println("WiFi connected");
 }
 
-void setup()
+void printWiFiDetails()
 {
-  // connect the serial port
-  Serial.begin(115200);
-
-  pinMode(STATUS_LED, OUTPUT);
-  // LED off - will indicate we're not connected to WiFi yet
-  digitalWrite(STATUS_LED, LOW);
-
-  connectToNetwork();
-
-  // LED on - will indicate that we're connected
-  digitalWrite(STATUS_LED, HIGH);
-
   // print the IP address
   IPAddress ip = WiFi.localIP();
-  Serial.println("IP address: ");
+  Serial.print("IP: ");
   Serial.println(ip);
+
+  // print the gateway address:
+  IPAddress gatewayIp = WiFi.gatewayIP();
+  Serial.print("Gateway: ");
+  Serial.println(gatewayIp);
 
   // print the MAC address
   byte mac[6];
   WiFi.macAddress(mac);
-  Serial.println("MAC address: ");
+  Serial.print("MAC: ");
   for (int i = 5; i >= 0; i--)
     Serial.print(mac[i], HEX);
 
   Serial.println("");
 }
 
+void setup()
+{
+  // connect the serial port
+  Serial.begin(115200);
+
+  // initialize the status LED
+  pinMode(STATUS_LED, OUTPUT);
+
+  connectWiFi();
+  printWiFiDetails();
+}
+
 void loop()
 {
-  delay(50);
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    // LED off - indicate that we are not connected
+    digitalWrite(STATUS_LED, LOW);
+
+    Serial.println("WiFi not connected.");
+    delay(1000);
+    return;
+  }
+
+  // LED on - indicate that we are connected
+  digitalWrite(STATUS_LED, HIGH);
 }
