@@ -1,6 +1,6 @@
 using TrainingIoT.RemoteControl.App.Messages;
 
-namespace TrainingIoT.RemoteControl.App.Domain
+namespace TrainingIoT.RemoteControl.App.Comm
 {
     public interface IFeatureCommandQueueService
     {

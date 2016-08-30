@@ -1,4 +1,4 @@
-namespace TrainingIoT.RemoteControl.App.Messages
+namespace TrainingIoT.RemoteControl.App.Domain
 {
     public enum FeatureType
     {

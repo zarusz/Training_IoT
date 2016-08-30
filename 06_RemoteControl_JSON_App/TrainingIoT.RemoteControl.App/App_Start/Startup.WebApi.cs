@@ -1,8 +1,11 @@
-﻿using System.Reflection;
+﻿using System.Net.Http.Headers;
+using System.Reflection;
 using System.Web.Http;
 using Autofac;
 using Autofac.Integration.WebApi;
 using Microsoft.Owin.Security.OAuth;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace TrainingIoT.RemoteControl.App
 {
@@ -24,6 +27,18 @@ namespace TrainingIoT.RemoteControl.App
             // Configure Web API to use only bearer token authentication.
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+
+
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            config.Formatters.JsonFormatter.UseDataContractJsonSerializer = false;
+            // handle polymorphic models
+            config.Formatters.JsonFormatter.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+            // serialize enums as string
+            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(
+                new Newtonsoft.Json.Converters.StringEnumConverter {CamelCaseText = true});
+            // For debugging ease display JSON when browser requests text/plan or html.
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/plain"));
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/html"));
 
             // Web API routes
             config.MapHttpAttributeRoutes();

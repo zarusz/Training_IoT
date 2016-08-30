@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using TrainingIoT.RemoteControl.App.Domain;
-using TrainingIoT.RemoteControl.App.Messages;
 using TrainingIoT.RemoteControl.App.Models;
 
 namespace TrainingIoT.RemoteControl.App
@@ -16,7 +15,10 @@ namespace TrainingIoT.RemoteControl.App
 	    {
 	        cfg.CreateMap<Device, DeviceInfoModel>();
 	        cfg.CreateMap<Device, DeviceDetailModel>();
-	    }
+	        cfg.CreateMap<DeviceFeature, FeatureModel>()
+	            .ForMember(x => x.DeviceId, x => x.MapFrom(d => d.Device.DeviceId));
+            cfg.CreateMap<SwitchDeviceFeature, SwitchFeatureModel>();
+        }
 
-	}
+    }
 }

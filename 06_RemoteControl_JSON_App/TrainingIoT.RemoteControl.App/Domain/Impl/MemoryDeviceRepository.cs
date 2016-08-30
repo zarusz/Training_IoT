@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using AutoMapper;
 
 namespace TrainingIoT.RemoteControl.App.Domain.Impl
 {

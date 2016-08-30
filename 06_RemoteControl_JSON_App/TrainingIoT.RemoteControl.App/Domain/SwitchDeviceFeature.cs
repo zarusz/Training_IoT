@@ -1,5 +1,3 @@
-using TrainingIoT.RemoteControl.App.Messages;
-
 namespace TrainingIoT.RemoteControl.App.Domain
 {
     public class SwitchDeviceFeature : DeviceFeature
@@ -22,11 +20,6 @@ namespace TrainingIoT.RemoteControl.App.Domain
         {
             IsOn = true;
             NotifyChange();
-        }
-
-        protected void NotifyChange()
-        {
-            NotifyChange(new SwitchFeatureCommand { On = IsOn, Port = Port, Type = Type });
         }
     }
 }

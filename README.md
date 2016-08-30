@@ -496,7 +496,7 @@ Since each of our IoT devices can have different sensors we also need a way to s
 This JSON message can describe a device which has 2 LEDs and 1 switch:
 ```json
 {
-	"device_id": "my_device_id",
+	"deviceId": "my_device_id",
 	"features": [
 		{
 			"type": "led",
@@ -535,8 +535,62 @@ We will start with the control app.
 #### 06_RemoteControl_JSON_App
 
 
-
 #### 06_RemoteControl_JSON
+
+We will be [ArduinoJson](https://github.com/bblanchon/ArduinoJson) as the JSON serialization library. This is how you find and install a library into your project from PlatformIO:
+
+1. Go [PlatformIO Libraries Registry](http://platformio.org/lib)
+2. Type `ArduinoJson` to find the library
+3. Open the library page and navigate to *Installation* tab
+4. Open the termminal (*PlatformIO > Terminal > Toggle*) and type:
+	```
+	platformio lib install 64
+	```
+	You will see something like this:
+	```
+	PS E:\dev\work\training_iot\06_RemoteControl_JSON_Device> platformio lib install 64
+	Installing library [ 64 ]:
+	Downloading...
+	Unpacking...
+	The library #64 'ArduinoJson' has been successfully installed!
+	```
+5. The library has been added to your project.
+6. You need to reference the library in the source files (usual C stuff):
+	```
+	#include <ArduinoJson.h>
+	```
+
+It's time to run the sample. When the device starts you should see this in the *Serial Monitor*:
+```
+Connecting to IoT_Network
+..
+WiFi connected
+IP: 192.168.2.148
+Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/register
+Payload: {"deviceId":"my_device_id","features":[{"type":"led","port":1}]}
+[HTTP] POST... response code: 200, description:
+Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_id
+[HTTP] GET... code: 200
+Response: (empty)
+Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_id
+[HTTP] GET... code: 200
+Response: (empty)
+```
+
+When the device sends its description to (registers itself with) the web app, we start to see the `my_device_id` device under the [Devices](http://iot-remotecontrol-2.azurewebsites.net/RemoteControl) menu. From there navigate to the control screen of the device to see the available options. From there we press the ON button next to the LED label. This causes the device to receive a LED command eventually. We can see this in the *Serial Monitor* and the LED turns on:
+
+```
+Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_id
+[HTTP] GET... code: 200
+Response: {"on":false,"type":"led","port":1}
+```
+
+#### Exercise
+
+1. Add 2 more LEDs to the device (e.g. port 2 & 3).
+2. Add support for `switch` feature.
+	* Connect the new relay module part.
+	* The web app already handles the `switch` type.
 
 ToDo
 

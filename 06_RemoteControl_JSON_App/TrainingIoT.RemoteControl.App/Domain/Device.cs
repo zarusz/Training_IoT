@@ -11,7 +11,7 @@ namespace TrainingIoT.RemoteControl.App.Domain
         public Device(string deviceId)
         {
             DeviceId = deviceId;
-            Features = new DeviceFeature[0];
+            Features = new List<DeviceFeature>();
         }
 
         public DeviceFeature GetFeatureByPort(int port) => Features.SingleOrDefault(x => x.Port == port);

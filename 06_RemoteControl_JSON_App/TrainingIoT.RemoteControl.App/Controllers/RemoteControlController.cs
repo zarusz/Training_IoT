@@ -51,8 +51,12 @@ namespace TrainingIoT.RemoteControl.App.Controllers
             else 
                 feature.Off();           
 
-            // no content, just HTTP200
-            return null;
+            return RedirectToAction("Device", new { id });
+        }
+
+        public ActionResult ChangeLed(string id, int port, bool on)
+        {
+            return ChangeSwitch(id, port, on);
         }
     }
 }

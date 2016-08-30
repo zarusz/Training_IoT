@@ -1,4 +1,5 @@
-﻿@model TrainingIoT.RemoteControl.App.Models.DeviceDetailModel
+﻿@using TrainingIoT.RemoteControl.App.Domain
+@model TrainingIoT.RemoteControl.App.Models.DeviceDetailModel
 <form class="form-horizontal">
     <div class="form-group">
         <label class="col-sm-2 control-label">Device ID</label>
@@ -6,11 +7,22 @@
             <p class="form-control-static">@Model.DeviceId</p>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label">LED</label>
-        <div class="col-sm-10">
-            @Html.ActionLink("ON", null, new { id = Model.DeviceId, state = "1" }, new { @class = "btn btn-default btn-lg" })
-            @Html.ActionLink("OFF", null, new { id = Model.DeviceId, state = "0" }, new { @class = "btn btn-default btn-lg" })
-        </div>
-    </div>
+    @foreach (var feature in Model.Features)
+    {
+        if (feature.Type == FeatureType.Switch)
+        {
+            @Html.Partial("SwitchFeature", feature)
+        }
+        else if (feature.Type == FeatureType.Led)
+        {
+            @Html.Partial("LedFeature", feature)
+        }
+    }
 </form>
+
+
+
+
+
+
+

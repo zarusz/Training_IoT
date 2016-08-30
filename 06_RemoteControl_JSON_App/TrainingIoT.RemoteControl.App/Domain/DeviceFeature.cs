@@ -1,5 +1,5 @@
-using Microsoft.Practices.ServiceLocation;
-using TrainingIoT.RemoteControl.App.Messages;
+using SlimMessageBus;
+using TrainingIoT.RemoteControl.App.Domain.Events;
 
 namespace TrainingIoT.RemoteControl.App.Domain
 {
@@ -17,10 +17,9 @@ namespace TrainingIoT.RemoteControl.App.Domain
             Port = port;
         }
 
-        protected void NotifyChange(FeatureCommand command)
+        protected void NotifyChange()
         {
-            var q = ServiceLocator.Current.GetInstance<IFeatureCommandQueueService>();
-            q.PushCommand(Device.DeviceId, command);
+            MessageBus.Current.Publish(new DeviceFeatureChangedEvent(this));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using TrainingIoT.RemoteControl.App.Comm;
 using TrainingIoT.RemoteControl.App.Domain;
 using TrainingIoT.RemoteControl.App.Messages;
 
@@ -21,6 +22,7 @@ namespace TrainingIoT.RemoteControl.App.Controllers
         }
 
         [HttpPost]
+        [Route("Register")]
         public HttpResponseMessage Register(DeviceDescriptionEvent e)
         {
             // for simplicity remove previous state for that device

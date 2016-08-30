@@ -76,6 +76,14 @@
       <HintPath>..\packages\AutoMapper.5.1.1\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -83,6 +91,22 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.3.7\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SlimMessageBus, Version=0.8.1.28358, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SlimMessageBus.0.8.1.28358\lib\net46\SlimMessageBus.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SlimMessageBus.Core, Version=0.8.1.28358, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SlimMessageBus.Core.0.8.1.28358\lib\net46\SlimMessageBus.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SlimMessageBus.ServiceLocator, Version=0.8.1.28358, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SlimMessageBus.ServiceLocator.0.8.1.28358\lib\net46\SlimMessageBus.ServiceLocator.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -212,14 +236,17 @@
     <Compile Include="App_Start\Startup.WebApi.cs" />
     <Compile Include="App_Start\Startup.Mvc.cs" />
     <Compile Include="App_Start\Startup.Services.cs" />
+    <Compile Include="Comm\DeviceFeatureChangedEventHandler.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Domain\DeviceFeature.cs" />
+    <Compile Include="Domain\Events\DeviceFeatureChangedEvent.cs" />
     <Compile Include="Domain\IDeviceFactory.cs" />
     <Compile Include="Domain\Impl\DefaultDeviceFactory.cs" />
+    <Compile Include="Domain\LedDeviceFeature.cs" />
     <Compile Include="Domain\SwitchDeviceFeature.cs" />
-    <Compile Include="Messages\FeatureType.cs" />
-    <Compile Include="Domain\IFeatureCommandQueueService.cs" />
-    <Compile Include="Domain\Impl\MemoryFeatureCommandQueueService.cs" />
+    <Compile Include="Domain\FeatureType.cs" />
+    <Compile Include="Comm\IFeatureCommandQueueService.cs" />
+    <Compile Include="Comm\MemoryFeatureCommandQueueService.cs" />
     <Compile Include="Messages\DeviceDescriptionEvent.cs" />
     <Compile Include="Messages\SwitchFeatureCommand.cs" />
     <Compile Include="Models\DeviceDetailModel.cs" />
@@ -238,7 +265,9 @@
     </Compile>
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\FeatureModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\SwitchFeatureModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
@@ -253,6 +282,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Compile Include="App_Start\Startup.Mapper.cs" />
+    <None Include="Properties\PublishProfiles\IoT-RemoteControl-2 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\IoT-RemoteControlApp.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -281,6 +311,8 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\RemoteControl\Index.cshtml" />
     <Content Include="Views\RemoteControl\Device.cshtml" />
+    <Content Include="Views\RemoteControl\SwitchFeature.cshtml" />
+    <Content Include="Views\RemoteControl\LedFeature.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

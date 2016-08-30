@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using TrainingIoT.RemoteControl.App.Messages;
 
-namespace TrainingIoT.RemoteControl.App.Domain.Impl
+namespace TrainingIoT.RemoteControl.App.Comm
 {
     public class MemoryFeatureCommandQueueService : IFeatureCommandQueueService
     {
