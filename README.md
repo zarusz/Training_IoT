@@ -514,7 +514,7 @@ This JSON message can describe a device which has 2 LEDs and 1 switch:
 }
 ```
 
-This message could be sent from the control app to turn the switch on.
+Another type of JSON message could be sent from the control app to turn the switch on.
 ```json
 {
 	"type": "switch",
@@ -523,7 +523,7 @@ This message could be sent from the control app to turn the switch on.
 }
 ```      
 
-Lets also introduce two REST API:
+Lets also introduce two REST API on the web app:
 
 1. /api/device/register
 	* The device would *HTTP POST* the device description (message #1).
@@ -534,18 +534,22 @@ We will start with the control app.
 
 #### 06_RemoteControl_JSON_App
 
+There is a test instance provisioned in Azure under http://iot-remotecontrol-2.azurewebsites.net
+This is a pretty standard ASP.NET app, so let's move on.
 
 #### 06_RemoteControl_JSON
 
-We will be [ArduinoJson](https://github.com/bblanchon/ArduinoJson) as the JSON serialization library. This is how you find and install a library into your project from PlatformIO:
+[ArduinoJson](https://github.com/bblanchon/ArduinoJson) is a popular JSON serialization library. This is how you find and install a library into your project from PlatformIO:
 
 1. Go [PlatformIO Libraries Registry](http://platformio.org/lib)
 2. Type `ArduinoJson` to find the library
 3. Open the library page and navigate to *Installation* tab
 4. Open the termminal (*PlatformIO > Terminal > Toggle*) and type:
+
 	```
 	platformio lib install 64
 	```
+
 	You will see something like this:
 	```
 	PS E:\dev\work\training_iot\06_RemoteControl_JSON_Device> platformio lib install 64
@@ -556,9 +560,14 @@ We will be [ArduinoJson](https://github.com/bblanchon/ArduinoJson) as the JSON s
 	```
 5. The library has been added to your project.
 6. You need to reference the library in the source files (usual C stuff):
+
 	```
 	#include <ArduinoJson.h>
 	```
+
+Lets check out the relevant code.
+
+ToDo
 
 It's time to run the sample. When the device starts you should see this in the *Serial Monitor*:
 ```
@@ -577,7 +586,7 @@ Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_
 Response: (empty)
 ```
 
-When the device sends its description to (registers itself with) the web app, we start to see the `my_device_id` device under the [Devices](http://iot-remotecontrol-2.azurewebsites.net/RemoteControl) menu. From there navigate to the control screen of the device to see the available options. From there we press the ON button next to the LED label. This causes the device to receive a LED command eventually. We can see this in the *Serial Monitor* and the LED turns on:
+Once the device sends its description to (registers itself with) the web app, we will see `my_device_id` device under the [Devices](http://iot-remotecontrol-2.azurewebsites.net/RemoteControl) menu. From there navigate to the control screen of the device to see the available options. From there we press the *ON* button next to the LED label. This causes the device to receive a LED command thus the LED will turn on. We can see some tracing information in the *Serial Monitor* as well:
 
 ```
 Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_id
@@ -588,9 +597,10 @@ Response: {"on":false,"type":"led","port":1}
 #### Exercise
 
 1. Add 2 more LEDs to the device (e.g. port 2 & 3).
+	* Since we have auto discovery, the device code should be the only place that requires an update.
 2. Add support for `switch` feature.
-	* Connect the new relay module part.
-	* The web app already handles the `switch` type.
+	* Connect the new relay module part (it will be explained).
+	* The web app already handles the `switch` type, so just updated the device.
 
 ToDo
 
