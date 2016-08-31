@@ -491,7 +491,7 @@ Lets look at using [JSON](https://pl.wikipedia.org/wiki/JSON) to represent the f
 
 Also for future extensibility we need to reflect on the message types and communication scheme. We surely need a way to handle more than just one LED. Also in the future we will want to handle stuff like IR transcievers or temperature sensors.
 
-Since each of our IoT devices can have different sensors we also need a way to send this description information across to the control app, so that it knows what can it do with the device.
+Since each of our IoT devices can have different sensors we also need a way to send this description (meta) information across to the control app. In the end the control web app needs knows what can it do with the device.
 
 This JSON message can describe a device which has 2 LEDs and 1 switch:
 ```json
@@ -514,6 +514,8 @@ This JSON message can describe a device which has 2 LEDs and 1 switch:
 }
 ```
 
+Ports represent virtual elements that the device has. This is separate from the PIN# as an endpoint device (e.g. temperature sensor) might use 3 pins to operate.
+
 Another type of JSON message could be sent from the control app to turn the switch on.
 ```json
 {
@@ -525,10 +527,12 @@ Another type of JSON message could be sent from the control app to turn the swit
 
 Lets also introduce two REST API on the web app:
 
-1. /api/device/register
+1. `/api/device/register`
 	* The device would *HTTP POST* the device description (message #1).
-2. /api/device/{device_id}
+2. `/api/device/{device_id}`
 	* The device would *HTTP GET* the next command from the control app (message #2).
+
+ToDo: Need a diagram.
 
 We will start with the control app.
 
@@ -537,9 +541,11 @@ We will start with the control app.
 There is a test instance provisioned in Azure under http://iot-remotecontrol-2.azurewebsites.net
 This is a pretty standard ASP.NET app, so let's move on.
 
-#### 06_RemoteControl_JSON
+#### 06_RemoteControl_JSON_Device
 
-[ArduinoJson](https://github.com/bblanchon/ArduinoJson) is a popular JSON serialization library. This is how you find and install a library into your project from PlatformIO:
+[ArduinoJson](https://github.com/bblanchon/ArduinoJson) is a popular JSON serialization library.
+PlatformIO provides a way to install 3rd party libraries.
+This is how you find and install a library into your project:
 
 1. Go [PlatformIO Libraries Registry](http://platformio.org/lib)
 2. Type `ArduinoJson` to find the library
@@ -561,13 +567,113 @@ This is a pretty standard ASP.NET app, so let's move on.
 5. The library has been added to your project.
 6. You need to reference the library in the source files (usual C stuff):
 
-	```
+	```cpp
 	#include <ArduinoJson.h>
 	```
 
-Lets check out the relevant code.
+Lets check out the relevant code in `src\Main.cpp`. We reference the ArduinoJson library
+```cpp
+#include <ArduinoJson.h>
+```
 
-ToDo
+Note these declarations:
+```cpp
+// all LED1 constants
+#define LED1_PIN 13
+#define LED1_PORT 1
+
+// all known feature types
+#define FEATURE_TYPE_LED "led"
+```
+
+We create the device description JSON message:
+```cpp
+String createDeviceDescriptionJson()
+{
+  StaticJsonBuffer<512> jsonBuffer;
+
+  JsonObject& featureLed = jsonBuffer.createObject();
+  featureLed["type"] = FEATURE_TYPE_LED;
+  featureLed["port"] = LED1_PORT;
+
+  JsonObject& root = jsonBuffer.createObject();
+  root["deviceId"] = device_id;
+
+  JsonArray& features = root.createNestedArray("features");
+  features.add(featureLed);
+
+  char buffer[512];
+  root.printTo(buffer, sizeof(buffer));
+  return String(buffer);
+}
+```
+
+This will produce the following JSON:
+```json
+{"deviceId":"my_device_id","features":[{"type":"led","port":1}]}
+```
+
+The message will be *HTTP POST-ed* to the web app when the device starts:
+```cpp
+bool sendRegisterDevice(const String& postPayload)
+{
+  String url = String("http://") + server_host + "/api/device/register";
+
+  HTTPClient http;
+  http.begin(url);
+  // tell the server we're posting JSON
+  http.addHeader("Content-Type", "application/json");
+  int httpCode = http.POST(postPayload);
+
+	// ...
+}
+```
+Notice that we're using the `POST()` method from the `HTTPClient` and that we're specifying the `Content-Type` *HTTP* header.
+
+Now the device also pulls (*long polling*) and parses (deserializes) the inbound JSON message (command) from the web app:
+```cpp
+String commandJson;
+// check if there is next command (non empty reponse)
+if (popDeviceCommand(commandJson) && commandJson.length() > 0)
+{
+	// parse JSON command
+	StaticJsonBuffer<256> jsonBuffer;
+	JsonObject& command = jsonBuffer.parseObject(commandJson);
+	if (!command.success())
+	{
+		Serial.println("parseObject() failed");
+	}
+	else
+	{
+		handleCommand(command);
+	}
+}
+```
+
+Notice that we're keeping `commandJson` and `jsonBuffer` on the stack while the call to `handleCommand(command)` happens.
+This is required because the actual `JsonObject` we pass as input argument points to parts of the memory used by these variables (see [Avoiding pitfalls ](https://github.com/bblanchon/ArduinoJson/wiki/Avoiding-pitfalls)).
+This is an optimization the JSON library uses to have least memory footprint targeting small embedded processors.
+
+The actual `handleCommand()` method handles the command and turns the LED on/off:
+```cpp
+// handle the incomming command
+void handleCommand(JsonObject& command)
+{
+  // handle the command
+  const char* type = command["type"].asString();
+  const int port = command["port"].as<int>();
+  if (strcmp(type, FEATURE_TYPE_LED) == 0)
+  {
+    // handle LED type
+    const bool on = command["on"].as<bool>();
+    if (port == LED1_PORT)
+    {
+      // handle LED on port 1
+      digitalWrite(LED1_PIN, on ? HIGH : LOW);
+    }
+  }
+}
+```
 
 It's time to run the sample. When the device starts you should see this in the *Serial Monitor*:
 ```
@@ -586,8 +692,9 @@ Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_
 Response: (empty)
 ```
 
-Once the device sends its description to (registers itself with) the web app, we will see `my_device_id` device under the [Devices](http://iot-remotecontrol-2.azurewebsites.net/RemoteControl) menu. From there navigate to the control screen of the device to see the available options. From there we press the *ON* button next to the LED label. This causes the device to receive a LED command thus the LED will turn on. We can see some tracing information in the *Serial Monitor* as well:
+Once the device sends its description to (registers itself with) the web app, we will see `my_device_id` device under the [Devices](http://iot-remotecontrol-2.azurewebsites.net/RemoteControl) menu. From there navigate to the control screen of the device to see the available options.
 
+If were to press the *ON* button next to the LED label. This would cause the device to receive a LED-on command thus the LED would become turned on. We can see some tracing information in the *Serial Monitor* as well:
 ```
 Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_id
 [HTTP] GET... code: 200
@@ -596,13 +703,31 @@ Response: {"on":false,"type":"led","port":1}
 
 #### Exercise
 
-1. Add 2 more LEDs to the device (e.g. port 2 & 3).
+1. Add 2 more LEDs to the device (e.g. port 2/3 and pin 12/14 respectively).
 	* Since we have auto discovery, the device code should be the only place that requires an update.
 2. Add support for `switch` feature.
 	* Connect the new relay module part (it will be explained).
-	* The web app already handles the `switch` type, so just updated the device.
+	* The web app already handles the `switch` type, so just update the device.
 
 ToDo
+
+#### Reference
+* [ArduinoJson Encoding](https://github.com/bblanchon/ArduinoJson/wiki/Encoding-JSON)
+* [ArduinoJson Decoding](https://github.com/bblanchon/ArduinoJson/wiki/Decoding-JSON)
+* [ArduinoJson GitHub](https://github.com/bblanchon/ArduinoJson)
+
+#### Summary
+
+* At this point we have a more roboust message format (JSON) that allows for easy addition of ports and feature types (e.g. temperature sensors).
+* Currently we handle two types of features (switch, LED) and can have many instances of each.
+* The device announces its capabilities to the web app, thus the manual pairing is not needed.
+* ToDo: The device application needs some refactoring:
+	* We need to encapsulate each feature in its own class. This would also allow us to put configuration like the port # and pin # together.
+	* The device settings (e.g. network/password) needs a class of its own.
+	* The code should be broken into multiple files/classes.
+* ToDo: We still need to think about:
+	* Replacing *long polling* over HTTP with a better scalable communication.
+	* Security
 
 ### TODO Next example
 
