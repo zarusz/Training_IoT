@@ -19,7 +19,7 @@ namespace TrainingIoT.RemoteControl.App.Domain
 
         protected void NotifyChange()
         {
-            MessageBus.Current.Publish(new DeviceFeatureChangedEvent(this));
+            MessageBus.Current.Publish(new FeatureChangedEvent(this));
         }
     }
 }

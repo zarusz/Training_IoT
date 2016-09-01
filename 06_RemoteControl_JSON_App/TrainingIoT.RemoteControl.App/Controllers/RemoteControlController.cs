@@ -45,7 +45,7 @@ namespace TrainingIoT.RemoteControl.App.Controllers
                 return HttpNotFound($"The device with {id} does not exist.");
             }
 
-            var feature = (SwitchDeviceFeature) device.GetFeatureByPort(port);
+            var feature = (SwitchFeature) device.GetFeatureByPort(port);
             if (on)
                 feature.On();
             else 

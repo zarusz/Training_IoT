@@ -481,7 +481,7 @@ Closing connection
 This is the first useful example of an IoT system. Yet its trivial and has many limitations:
 * The long polling communication does not scale when more devices are connected. We will look at alternatives later.
 * The security is poor. Since the communication is exposed on the Internet anyone could easily drive our LED.
-* While the LED state representation on-the-wire is simple its not extensible when we add more elements to our device.
+* While the LED state command representation on-the-wire is simple its not extensible when we add more elements to our device.
 
 ### 06_RemoteControl_JSON
 
@@ -501,22 +501,23 @@ This JSON message can describe a device which has 2 LEDs and 1 switch:
 		{
 			"type": "led",
 			"port": 1
-		},
-		{
+		}, {
 			"type": "led",
 			"port": 2
-		},
-		{
+		}, {
 			"type": "switch",
 			"port": 3
+		}, {
+			"type": "temperatureSensor",
+			"port": 4
 		}
 	]
 }
 ```
 
-Ports represent virtual elements that the device has. This is separate from the PIN# as an endpoint device (e.g. temperature sensor) might use 3 pins to operate.
+Ports represent virtual elements that the device has. Port is separate from the microcontroller PIN# as an endpoint device (e.g. temperature sensor) might use 3 pins to operate.
 
-Another type of JSON message could be sent from the control app to turn the switch on.
+Another type of JSON message could be sent from the control app to turn the switch on:
 ```json
 {
 	"type": "switch",
@@ -525,12 +526,25 @@ Another type of JSON message could be sent from the control app to turn the swit
 }
 ```      
 
+Finally the device could periodically send this JSON message to report the temperature sensor readings:
+```json
+{
+	"type": "temperatureSensor",
+	"port": 4,
+	"deviceId": "my_device_id",
+	"temperature": 23.5
+}
+```
+
 Lets also introduce two REST API on the web app:
 
-1. `/api/device/register`
-	* The device would *HTTP POST* the device description (message #1).
-2. `/api/device/{device_id}`
-	* The device would *HTTP GET* the next command from the control app (message #2).
+1. `/api/device/register` (HTTP POST)
+	* The device *HTTP POST-s* the device description upon start (message #1).
+2. `/api/device/{device_id}` (HTTP GET)
+	* The device periodically *HTTP GET-s* the next command to execute from the control app (message #2).
+	* If there is no pending command for the device to execute, the response payload will be empty (and *HTTP200*).
+3. `/api/device/sensor` (HTTP POST)
+	* The device periodically *HTTP POST-s* any sensor readings (message #3).
 
 ToDo: Need a diagram.
 
@@ -543,7 +557,8 @@ This is a pretty standard ASP.NET app, so let's move on.
 
 #### 06_RemoteControl_JSON_Device
 
-[ArduinoJson](https://github.com/bblanchon/ArduinoJson) is a popular JSON serialization library.
+[ArduinoJson](https://github.com/bblanchon/ArduinoJson) is a popular JSON serialization library. This will make working with JSON easy.
+
 PlatformIO provides a way to install 3rd party libraries.
 This is how you find and install a library into your project:
 
@@ -586,38 +601,15 @@ Note these declarations:
 #define FEATURE_TYPE_LED "led"
 ```
 
-We create the device description JSON message:
+We have an utility method to *HTTP POST* JSON messages to the web app:
 ```cpp
-String createDeviceDescriptionJson()
+bool postJson(const String& path, const String& postPayload)
 {
-  StaticJsonBuffer<512> jsonBuffer;
+  bool success = false;
+  String url = String("http://") + server_host + path;
 
-  JsonObject& featureLed = jsonBuffer.createObject();
-  featureLed["type"] = FEATURE_TYPE_LED;
-  featureLed["port"] = LED1_PORT;
-
-  JsonObject& root = jsonBuffer.createObject();
-  root["deviceId"] = device_id;
-
-  JsonArray& features = root.createNestedArray("features");
-  features.add(featureLed);
-
-  char buffer[512];
-  root.printTo(buffer, sizeof(buffer));
-  return String(buffer);
-}
-```
-
-This will produce the following JSON:
-```json
-{"deviceId":"my_device_id","features":[{"type":"led","port":1}]}
-```
-
-The message will be *HTTP POST-ed* to the web app when the device starts:
-```cpp
-bool sendRegisterDevice(const String& postPayload)
-{
-  String url = String("http://") + server_host + "/api/device/register";
+  Serial.printf("Connecting to %s\n", url.c_str());
+  Serial.printf("Payload: %s\n", postPayload.c_str());
 
   HTTPClient http;
   http.begin(url);
@@ -626,15 +618,99 @@ bool sendRegisterDevice(const String& postPayload)
   int httpCode = http.POST(postPayload);
 
 	// ...
+
+  http.end();
+  return success;
 }
 ```
 Notice that we're using the `POST()` method from the `HTTPClient` and that we're specifying the `Content-Type` *HTTP* header.
 
-Now the device also pulls (*long polling*) and parses (deserializes) the inbound JSON message (command) from the web app:
+We create the device description JSON message:
+```cpp
+String createDeviceDescriptionJson()
+{
+	StaticJsonBuffer<512> jsonBuffer;
+
+  JsonObject& root = jsonBuffer.createObject();
+  root["deviceId"] = device_id;
+  JsonArray& features = root.createNestedArray("features");
+
+  JsonObject& featureLed1 = jsonBuffer.createObject();
+  featureLed1["type"] = FEATURE_TYPE_LED;
+  featureLed1["port"] = LED1_PORT;
+
+  features.add(featureLed1);
+
+  char buffer[512];
+  root.printTo(buffer, sizeof(buffer));
+  return String(buffer);
+}
+```
+
+This will produce the following device description JSON:
+```json
+{"deviceId":"my_device_id","features":[{"type":"led","port":1}]}
+```
+
+We use this along with the utility method to send the description message upon device start:
+```cpp
+bool registerDevice()
+{
+  auto msgJson = createDeviceDescriptionJson();
+  return postJson("/api/device/register", msgJson);
+}
+```
+
+Also there another utility method to *HTTP GET* JSON messages from the web app:
+```cpp
+bool getJson(const String& path, String& payload)
+{
+  bool success = false;
+  String url = String("http://") + server_host + path;
+  Serial.printf("Connecting to %s\n", url.c_str());
+
+  HTTPClient http;
+  http.begin(url);
+
+  int httpCode = http.GET();
+  if (httpCode > 0)
+  {
+    // HTTP header has been send and Server response header has been handled
+    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+
+    // file found at server
+    if (httpCode == HTTP_CODE_OK)
+    {
+      success = true;
+      payload = http.getString();
+      Serial.printf("Response: %s\n", payload.length() > 0 ? payload.c_str() : "(empty)");
+    }
+  }
+  else
+  {
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+
+  http.end();
+  return success;
+}
+```
+
+The device pulls command messages from the web app using the utility method:
+```cpp
+bool popDeviceCommand(String& commandJson)
+{
+  String path = String("/api/device/") + device_id;
+  // getJson succeeds and non-empty response payload
+  return getJson(path, commandJson) && commandJson.length() > 0;
+}
+```
+
+In the main `loop()` the device periodically pulls (*long polling*) and parses (deserializes) the inbound JSON message (command) from the web app:
 ```cpp
 String commandJson;
-// check if there is next command (non empty reponse)
-if (popDeviceCommand(commandJson) && commandJson.length() > 0)
+// check if there is next command
+if (popDeviceCommand(commandJson))
 {
 	// parse JSON command
 	StaticJsonBuffer<256> jsonBuffer;
@@ -648,6 +724,8 @@ if (popDeviceCommand(commandJson) && commandJson.length() > 0)
 		handleCommand(command);
 	}
 }
+
+delay(2000);
 ```
 
 Notice that we're keeping `commandJson` and `jsonBuffer` on the stack while the call to `handleCommand(command)` happens.
@@ -708,6 +786,10 @@ Response: {"on":false,"type":"led","port":1}
 2. Add support for `switch` feature.
 	* Connect the new relay module part (it will be explained).
 	* The web app already handles the `switch` type, so just update the device.
+3. Add support for sending temperature data.
+ 	* See the #3rd type of message and the dedicated RESTful method.
+	* For now send fake temperature every 5 seconds (use the [`millis()`](https://www.arduino.cc/en/Reference/Millis) method).
+	* The web app already handles the `temperatureSensor` type, so just update the device.
 
 ToDo
 
@@ -715,10 +797,11 @@ ToDo
 * [ArduinoJson Encoding](https://github.com/bblanchon/ArduinoJson/wiki/Encoding-JSON)
 * [ArduinoJson Decoding](https://github.com/bblanchon/ArduinoJson/wiki/Decoding-JSON)
 * [ArduinoJson GitHub](https://github.com/bblanchon/ArduinoJson)
+* [`millis()`](https://www.arduino.cc/en/Reference/Millis)
 
 #### Summary
 
-* At this point we have a more roboust message format (JSON) that allows for easy addition of ports and feature types (e.g. temperature sensors).
+* At this point we have a more robust message format (JSON) that allows for easy addition of ports and feature types (e.g. temperature sensors).
 * Currently we handle two types of features (switch, LED) and can have many instances of each.
 * The device announces its capabilities to the web app, thus the manual pairing is not needed.
 * ToDo: The device application needs some refactoring:

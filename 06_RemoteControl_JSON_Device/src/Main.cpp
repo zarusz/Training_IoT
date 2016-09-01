@@ -59,25 +59,25 @@ String createDeviceDescriptionJson()
 {
   StaticJsonBuffer<512> jsonBuffer;
 
-  JsonObject& featureLed = jsonBuffer.createObject();
-  featureLed["type"] = FEATURE_TYPE_LED;
-  featureLed["port"] = LED1_PORT;
-
   JsonObject& root = jsonBuffer.createObject();
   root["deviceId"] = device_id;
-
   JsonArray& features = root.createNestedArray("features");
-  features.add(featureLed);
+
+  JsonObject& featureLed1 = jsonBuffer.createObject();
+  featureLed1["type"] = FEATURE_TYPE_LED;
+  featureLed1["port"] = LED1_PORT;
+
+  features.add(featureLed1);
 
   char buffer[512];
   root.printTo(buffer, sizeof(buffer));
   return String(buffer);
 }
 
-bool sendRegisterDevice(const String& postPayload)
+bool postJson(const String& path, const String& postPayload)
 {
   bool success = false;
-  String url = String("http://") + server_host + "/api/device/register";
+  String url = String("http://") + server_host + path;
 
   Serial.printf("Connecting to %s\n", url.c_str());
   Serial.printf("Payload: %s\n", postPayload.c_str());
@@ -110,13 +110,13 @@ bool sendRegisterDevice(const String& postPayload)
 bool registerDevice()
 {
   auto msgJson = createDeviceDescriptionJson();
-  return sendRegisterDevice(msgJson);
+  return postJson("/api/device/register", msgJson);
 }
 
-bool popDeviceCommand(String& payload)
+bool getJson(const String& path, String& payload)
 {
   bool success = false;
-  String url = String("http://") + server_host + "/api/device/" + device_id;
+  String url = String("http://") + server_host + path;
   Serial.printf("Connecting to %s\n", url.c_str());
 
   HTTPClient http;
@@ -143,6 +143,13 @@ bool popDeviceCommand(String& payload)
 
   http.end();
   return success;
+}
+
+bool popDeviceCommand(String& commandJson)
+{
+  String path = String("/api/device/") + device_id;
+  // getJson succeeds and non-empty response payload
+  return getJson(path, commandJson) && commandJson.length() > 0;
 }
 
 // handle the incomming command
@@ -181,8 +188,8 @@ void loop()
   }
 
   String commandJson;
-  // check if there is next command (non empty reponse)
-  if (popDeviceCommand(commandJson) && commandJson.length() > 0)
+  // check if there is next command
+  if (popDeviceCommand(commandJson))
   {
     // parse JSON command
     StaticJsonBuffer<256> jsonBuffer;

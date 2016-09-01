@@ -30,9 +30,11 @@ namespace TrainingIoT.RemoteControl.App
             MessageBus.SetProvider(() => messageBus);
             builder.RegisterInstance(messageBus);
 
-            builder.RegisterType<DeviceFeatureChangedEventHandler>()
+            builder.RegisterType<FeatureChangedEventHandler>()
                 .AsImplementedInterfaces();
 
+            builder.RegisterType<SensorFeatureEventHandler>()
+                .AsImplementedInterfaces();
         }
     }
 }

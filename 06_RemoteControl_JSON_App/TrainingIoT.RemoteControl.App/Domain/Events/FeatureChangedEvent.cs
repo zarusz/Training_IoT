@@ -1,10 +1,10 @@
 ﻿namespace TrainingIoT.RemoteControl.App.Domain.Events
 {
-    public class DeviceFeatureChangedEvent
+    public class FeatureChangedEvent
     {
         public DeviceFeature Feature { get; protected set; }
 
-        public DeviceFeatureChangedEvent(DeviceFeature feature)
+        public FeatureChangedEvent(DeviceFeature feature)
         {
             Feature = feature;
         }

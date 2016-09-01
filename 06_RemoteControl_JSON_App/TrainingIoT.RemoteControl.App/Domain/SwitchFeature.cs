@@ -1,10 +1,10 @@
 namespace TrainingIoT.RemoteControl.App.Domain
 {
-    public class SwitchDeviceFeature : DeviceFeature
+    public class SwitchFeature : DeviceFeature
     {
         public bool IsOn { get; protected set; }
 
-        public SwitchDeviceFeature(Device device, FeatureType type, int port)
+        public SwitchFeature(Device device, FeatureType type, int port)
             : base(device, type, port)
         {
             Off();

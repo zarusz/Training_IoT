@@ -6,21 +6,21 @@ using TrainingIoT.RemoteControl.App.Messages;
 
 namespace TrainingIoT.RemoteControl.App.Comm
 {
-    public class DeviceFeatureChangedEventHandler : IHandles<DeviceFeatureChangedEvent>
+    public class FeatureChangedEventHandler : IHandles<FeatureChangedEvent>
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
         private readonly IFeatureCommandQueueService _queue;
 
-        public DeviceFeatureChangedEventHandler(IFeatureCommandQueueService queue)
+        public FeatureChangedEventHandler(IFeatureCommandQueueService queue)
         {
             _queue = queue;
         }
 
-        #region Implementation of IHandles<in DeviceFeatureChangedEvent>
+        #region Implementation of IHandles<in FeatureChangedEvent>
 
-        public void Handle(DeviceFeatureChangedEvent message)
+        public void Handle(FeatureChangedEvent message)
         {
-            var switchFeature = message.Feature as SwitchDeviceFeature;
+            var switchFeature = message.Feature as SwitchFeature;
             if (switchFeature != null)
             {
                 Logger.Info("Switch Port:{0} On:{1}", switchFeature.Port, switchFeature.IsOn);

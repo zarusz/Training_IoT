@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using SlimMessageBus;
 using TrainingIoT.RemoteControl.App.Comm;
 using TrainingIoT.RemoteControl.App.Domain;
 using TrainingIoT.RemoteControl.App.Messages;
@@ -36,7 +37,6 @@ namespace TrainingIoT.RemoteControl.App.Controllers
             _deviceFactory.CreateFromDiscovery(e);
 
             return Request.CreateResponse(HttpStatusCode.OK);
-
         }
 
         [HttpGet]
@@ -50,6 +50,15 @@ namespace TrainingIoT.RemoteControl.App.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             return Request.CreateResponse(HttpStatusCode.OK, command);
+        }
+
+        [HttpPost]
+        [Route("Sensor")]
+        public HttpResponseMessage Sensor(SensorFeatureEvent e)
+        {
+            MessageBus.Current.Publish(e);
+            return Request.CreateResponse(HttpStatusCode.OK);
+
         }
     }
 }

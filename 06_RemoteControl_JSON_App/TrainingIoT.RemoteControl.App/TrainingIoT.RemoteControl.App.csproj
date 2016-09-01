@@ -236,19 +236,26 @@
     <Compile Include="App_Start\Startup.WebApi.cs" />
     <Compile Include="App_Start\Startup.Mvc.cs" />
     <Compile Include="App_Start\Startup.Services.cs" />
-    <Compile Include="Comm\DeviceFeatureChangedEventHandler.cs" />
+    <Compile Include="Comm\FeatureChangedEventHandler.cs" />
+    <Compile Include="Comm\SensorFeatureEventHandler.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Domain\DeviceFeature.cs" />
-    <Compile Include="Domain\Events\DeviceFeatureChangedEvent.cs" />
+    <Compile Include="Domain\Events\FeatureChangedEvent.cs" />
+    <Compile Include="Domain\HumiditySensorFeature.cs" />
     <Compile Include="Domain\IDeviceFactory.cs" />
     <Compile Include="Domain\Impl\DefaultDeviceFactory.cs" />
-    <Compile Include="Domain\LedDeviceFeature.cs" />
-    <Compile Include="Domain\SwitchDeviceFeature.cs" />
+    <Compile Include="Domain\LedFeature.cs" />
+    <Compile Include="Domain\SwitchFeature.cs" />
     <Compile Include="Domain\FeatureType.cs" />
     <Compile Include="Comm\IFeatureCommandQueueService.cs" />
     <Compile Include="Comm\MemoryFeatureCommandQueueService.cs" />
+    <Compile Include="Domain\TemperatureSensorFeature.cs" />
     <Compile Include="Messages\DeviceDescriptionEvent.cs" />
+    <Compile Include="Messages\HumiditySensorFeatureEvent.cs" />
+    <Compile Include="Messages\JsonConverters\SensorFeatureEventConverter.cs" />
+    <Compile Include="Messages\SensorFeatureEvent.cs" />
     <Compile Include="Messages\SwitchFeatureCommand.cs" />
+    <Compile Include="Messages\TemperatureSensorFeatureEvent.cs" />
     <Compile Include="Models\DeviceDetailModel.cs" />
     <Compile Include="Models\DeviceInfoModel.cs" />
     <Compile Include="Controllers\RemoteControlController.cs" />
@@ -266,8 +273,11 @@
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\FeatureModel.cs" />
+    <Compile Include="Models\HumiditySensorFeatureModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\LedFeatureModel.cs" />
     <Compile Include="Models\SwitchFeatureModel.cs" />
+    <Compile Include="Models\TemperatureSensorFeatureModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
@@ -313,6 +323,8 @@
     <Content Include="Views\RemoteControl\Device.cshtml" />
     <Content Include="Views\RemoteControl\SwitchFeature.cshtml" />
     <Content Include="Views\RemoteControl\LedFeature.cshtml" />
+    <Content Include="Views\RemoteControl\TemperatureSensorFeature.cshtml" />
+    <None Include="Views\RemoteControl\HumiditySensorFeature.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

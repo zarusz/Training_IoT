@@ -1,4 +1,5 @@
 ﻿@using TrainingIoT.RemoteControl.App.Domain
+@using TrainingIoT.RemoteControl.App.Models
 @model TrainingIoT.RemoteControl.App.Models.DeviceDetailModel
 <form class="form-horizontal">
     <div class="form-group">
@@ -16,6 +17,14 @@
         else if (feature.Type == FeatureType.Led)
         {
             @Html.Partial("LedFeature", feature)
+        }
+        else if (feature.Type == FeatureType.TemperatureSensor)
+        {
+            @Html.Partial("TemperatureSensorFeature", (TemperatureSensorFeatureModel) feature)
+        }
+        else if (feature.Type == FeatureType.HumiditySensor)
+        {
+            @Html.Partial("HumiditySensorFeature", (HumiditySensorFeatureModel) feature)
         }
     }
 </form>
