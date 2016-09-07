@@ -1,3 +1,3 @@
-### 10. Motion Sensor (10_Motion_Sensor)
+### 10. Motion Sensor (`10_Motion_Sensor`)
 
 ToDo

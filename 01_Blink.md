@@ -1,4 +1,4 @@
-### LED Blink - ESP-Arduino Hello World (01_Blink)
+### LED Blink - The ESP-Arduino Hello World (`01_Blink`)
 
 This is a traditional *Hello World* sample for the *ESP8266* board and *Arduino* framework. The sample turns on/off a LED using a GPIO pin and prints the famous `Hello World!`.
 

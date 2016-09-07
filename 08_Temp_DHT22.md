@@ -1,4 +1,4 @@
-### 08. DHT22 - Temperature/Humidity Sensor (08_Temp_DHT22)
+### 08. DHT22 - Temperature/Humidity Sensor (`08_Temp_DHT22`)
 
 In this exercise we will:
 * Connect an actual temperature and humidity sensors.

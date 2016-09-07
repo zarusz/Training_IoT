@@ -1,4 +1,4 @@
-### 04. First WiFi Connection (04_WiFi)
+### 04. First WiFi Connection (`04_WiFi`)
 
 ESP8266 has a built in WiFi module. We can interface with it using the [WiFi](https://github.com/esp8266/Arduino/blob/master/doc/esp8266wifi/station-class.md#station-class) class.
 The ESP WiFi can work in one of the 3 modes:

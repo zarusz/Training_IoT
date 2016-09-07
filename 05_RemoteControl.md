@@ -1,4 +1,4 @@
-### 05. First Trivial Remote Control (05_RemoteControl)
+### 05. First Trivial Remote Control (`05_RemoteControl`)
 
 The example consists of two apps:
 * client: ESP device with a connected LED (C++)
@@ -19,7 +19,7 @@ We need to agree on the communication scheme between the ESP device and our web 
 
 Lets start with the web app first...
 
-#### 05_RemoteControl_App - control web app
+#### Control web app (`05_RemoteControl_App`)
 
 Folder `05_RemoteControl_App` contains an *ASP.NET* project.
 The web app exposes two *RESTful* methods:
@@ -52,7 +52,7 @@ The web app also has a simple [user interface](http://iot-remotecontrolapp.azure
 
 The web app is not that interesting, so let's move on to the client device (ESP).
 
-#### 05_RemoteControl - client device
+#### Client device (`05_RemoteControl`)
 
 The hardware setup should be the same as in [01_Blink](#01_blink) sample (ESP with LED).
 

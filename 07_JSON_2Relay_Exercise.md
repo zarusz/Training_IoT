@@ -1,4 +1,4 @@
-### 07. Exercise from 06. (07_RemoteControl_JSON_Device_Exercise)
+### 07. Exercise from 06. (`07_JSON_2Relay_Exercise`)
 
 The exercises from the previous step are in the `06_RemoteControl_JSON_Device_Exercise` folder.
 

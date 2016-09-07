@@ -1,4 +1,4 @@
-### 06 JSON and Relay Module (06_JSON_2Relay)
+### 06. JSON and Relay Module (`06_JSON_2Relay`)
 
 The previous example used plain text to transmit the LED state (`0` or `1`). This format does not easily extend when time comes to add more points of control or transmit sensor readings.
 
@@ -65,12 +65,12 @@ ToDo: Need a diagram.
 
 We will start with the control app.
 
-#### 06_RemoteControl_JSON_App
+#### App (`06_JSON_2Relay_App`)
 
 There is a test instance provisioned in Azure under http://iot-remotecontrol-2.azurewebsites.net.
 This is a pretty standard ASP.NET app, so let's move on.
 
-#### 06_RemoteControl_JSON_Device
+#### Device (`06_JSON_2Relay`)
 
 [ArduinoJson](https://github.com/bblanchon/ArduinoJson) is a popular JSON serialization library. This will make working with JSON easy.
 

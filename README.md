@@ -95,6 +95,7 @@ More details are provided on the [ESP Arduino wiki](https://github.com/esp8266/A
 	* [08_Temp_DHT22](07_Temp_DHT22.md)
 	* [09_MQTT](07_MQTT.md)
 	* [10_Motion_Sensor](10_Motion_Sensor.md)
+	* [11_IR](11_IR.md)
 
 
 ### TODO Next example
