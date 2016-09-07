@@ -1,26 +1,33 @@
 ## Intro
 
-Workshop materials for the IoT hand-on training. The training was first done at the [TWF 2016 Conference](http://twf.community).
+Workshop materials for the IoT hand-on training. The training is based on the [ESP8266](http://espressif.com/en/products/hardware/esp8266ex/overview) chip and [Arduino](https://github.com/esp8266/Arduino) framework.
+The training was first done at the [TWF 2016 Conference](http://twf.community).
+
+The idea behind the workshop is to have a step-by-step tutorial on building *Internet of Things (IoT)* solutions. The initial exercses are simple and evolve over time.
+
 If any questions please email me.
 
-#### Resources
+## Resources
 
 * [ESP8266 Community Forum](http://www.esp8266.com/)
 * [Arduino core for ESP8266 WiFi chip](https://github.com/esp8266/Arduino)
 * [Arduino Reference](https://www.arduino.cc/en/Reference/HomePage)
 * [esp8266-wiki](https://github.com/esp8266/esp8266-wiki/wiki)
+* [Arduino Tutorials](https://www.arduino.cc/en/Tutorial/BuiltInExamples)
 
-#### Prerequisites
+## Prerequisites
 
-##### Software
+#### Software
 
-Ensure you have these installed:
+Ensure you have installed:
 * [PlatformIO](http://platformio.org/) IDE for the IoT device
+	* Here is the [installation guide](http://docs.platformio.org/en/stable/ide/atom.html#installation).
+	* Ensure you install *clang* to have code completion.
 * [Visual Studio 2015 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) IDE for the control app
 
-##### Hardware
+#### Hardware
 
-The training requires these parts:
+The training requires parts:
 * Chip
 	* Module WiFi ESP-12E ESP8266 Black - 11 GPIO, ADC, PCB antenna
 	* Adapter board ESP8266 ESP-12 / 12E / 12F / 07
@@ -43,94 +50,87 @@ The training requires these parts:
 	* 3x 220&#937; resistor
 * Computer (PC, MAC?)
 
-### Legal Note
+## Notes
+
+* Schematics are prepared using [Fritzing](http://fritzing.org/home/).
+
+##### License
+TBD
+
+##### Legal Notes
 1. This material is provided as is.
 2. The author is not responsible for any damage this might cause ;-)
 
+## Essentials
 
-## 01_blink
+### Boot Modes
+Whenever the ESP is reset or powered on it checks the state of three GPIO pins to enter one of the boot modes:
 
-This is a traditional *Hello World* sample for the *ESP8266* board and *Arduino* framework. The sample turns on/off a LED using a GPIO pin.
+GPIO15|GPIO0|GPIO2|Mode
+------|-----|-----|----
+    0V|   0V| 3.3V|UART Bootloader
+    0V| 3.3V| 3.3V|Boot sketch
+  3.3V|    x|    x|SDIO mode (not used for Arduino)
 
-#### Objectives
-* Learn to use PlatformIO.
-* Understand the basic program structure.
-* Learn how to connect ESP8266 and how to flash it.
-* Learn how to use GPIO pins to drive a LED.
+The *UART Bootloader* mode is used to upload our program.
+The *Boot sketch* mode is used to execute our program (normal mode).
 
-#### Hardware
-
-First lets connect the hardware...
-
-![alt text](01_blink_bb.png "Bread board for 01_blink sample")
-
-Connections of ESP8266 pins:
-* `RST` of ESP8266 connected via a push switch to `LOW`.
-  * When the button gets pressed it will restart our program (and the chip).
-* `EN` is connected to `HIGH` to *enable* the chip.
-  * The chip enters *sleep mode* if connected to `LOW` (or not connected at all).  
-  * *Sleep mode* is used to lower the power consumption.
-* `GND` and `3V3` is connected to `GND` and voltage `3.3V` respectively.      
-
-The sample program will blink a LED. The LED's anode (shorter leg) is connected to `GND`, the cathode is connected via a 220&#937; resistor to the GPIO pin `#13`. The resistor is needed to limit the current on the LED (not to burn it).
-
-#### Software
-
-The structure of the project files comes from the [Platform IO](http://platformio.org/). The most interesting part of the sample is located in the main program file `src\Main.cpp`:
-
-```cpp
-#include <Arduino.h>
-
-#define LED 13
-
-void setup()
-{
-  // initialize LED digital pin as an output.
-  pinMode(LED, OUTPUT);
-}
-
-void loop()
-{
-  // turn the LED on (HIGH is the voltage level)
-  digitalWrite(LED, HIGH);
-  // wait for a second
-  delay(1000);
-  // turn the LED off by making the voltage LOW
-  digitalWrite(LED, LOW);
-   // wait for a second
-  delay(1000);
-}
+At startup ESP prints out the current boot mode:
+```
+rst cause:2, boot mode:(3,6)
 ```
 
-Some explanation on the code structure...
+More details are provided on the [ESP Arduino wiki](https://github.com/esp8266/Arduino/blob/master/doc/boards.md#boot-messages-and-modes).
 
-Any program should have exactly one `setup()` and `loop()` functions defined. The `setup` is executed only once - when the chip starts (when powered or reset); after that `loop` is executed repeatedly.
+## Instructions
 
-The `#include <Arduino.h>` brings in all the Arduino framework functions.
+* [01_Blink](01_Blink.md)
+* [02_Blink_SOS](02_Blink_SOS.md)
+* [03_Blink_3LED](03_Blink_3LED.md)
+* [04_WiFi](04_WiFi.md)
+* [05_RemoteControl](05_RemoteControl.md)
+* [06_JSON_2Relay](06_JSON_2Relay.md)
+* [07_JSON_2Relay_Exercise](07_JSON_2Relay_Exercise.md)
+* ToDo:
+	* [08_Temp_DHT22](08_Temp_DHT22.md)
+	* [09_MQTT](09_MQTT.md)
+	* [10_Motion_Sensor](10_Motion_Sensor.md)
+	* [11_IR](11_IR.md)
 
-#### Arduino Reference
-* [`pinMode(pin, mode)`](https://www.arduino.cc/en/Reference/PinMode)
-* [`digitalWrite(pin, value)`](https://www.arduino.cc/en/Reference/DigitalWrite)
-* [`delay(ms)`](https://www.arduino.cc/en/Reference/Delay)
-* [`setup()`](https://www.arduino.cc/en/Reference/Setup)
-* [`loop()`](https://www.arduino.cc/en/Reference/Loop)
 
-#### Exercise
+### TODO Next example
 
-1. Modify the program to make the LED emit [SOS signal](https://en.wikipedia.org/wiki/SOS) (`...---...`)
-  * [ ] Change the program.
-2. Blink 3 LEDs one after another
-  * [ ] Connect 2 more LEDs (green and yellow) to GPIO pins `#16` and `#12`.
-  * [ ] Change the program.
+TODO
 
-### 02_blink_SOS
+## Extras
 
-This an example for solving exercise *#1* from the *01_blink* section.
+### Exceptions
 
-### 03_blink_3LED
+Sometime the program causes runtime errors that cause the chip to reboot and enter invalid state. ESP provides some diagnostic information when an error happens:
 
-This an example for solving exercise *#2* from the *01_blink* section.
+```
+Exception (28):
+epc1=0x40221a46 epc2=0x00000000 epc3=0x00000000 excvaddr=0x00000000 depc=0x00000000
 
-### 04_wifi
+ctx: sys
+sp: 3ffff850 end: 3fffffb0 offset: 01a0
 
-ToDo
+>>>stack>>>
+3ffff9f0:  00000001 00000004 3ffe99b4 00000002
+...
+3fffffa0:  400201e9 efac3ebe ffffff01 55aa55aa
+<<<stack<<<
+```
+
+See the list of exceptions [Exception Causes (EXCCAUSE)](https://github.com/esp8266/Arduino/blob/master/doc/exception_causes.md)
+
+### Upgrading ESP to newer Espressif SDK
+
+To upgrade your ESP8266 with the latest firmware, you need:
+
+1. The [Flash Download Tool](http://www.espressif.com/en/support/download/other-tools)
+2. The [official SDK](http://espressif.com/en/support/download/sdks-demos) from Espressif.
+
+Typically you will need the *NONOS* SDK. For example `ESP8266 NONOS SDK V1.5.4`.
+
+There is a really [great article](http://www.allaboutcircuits.com/projects/update-the-firmware-in-your-esp8266-wi-fi-module/) on the upgrade procedure.

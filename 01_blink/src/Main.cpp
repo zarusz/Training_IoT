@@ -4,12 +4,21 @@
  * then off for one second, repeatedly.
  */
 
+// reference the arduino framework
 #include <Arduino.h>
 
+// the LED's GPIO pin number
 #define LED 13
 
 void setup()
 {
+  // initialize serial communication
+  Serial.begin(115200);
+
+  Serial.println("");
+  Serial.println("Hello World!");
+  Serial.println("");
+
   // initialize LED digital pin as an output.
   pinMode(LED, OUTPUT);
 }
