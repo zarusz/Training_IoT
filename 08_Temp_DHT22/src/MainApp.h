@@ -38,6 +38,7 @@ public:
 	// from DeviceContext
 	virtual DeviceConfig& GetConfig() { return _deviceConfig; }
   virtual MessageBus& GetMessageBus() { return _messageBus; }
+	virtual JsonSerializationProvider& GetSerializationProvider() { return _serializationProvider; }
 
 	// from MessageHandler
 	virtual void Handle(const char* topic, JsonObject& message);

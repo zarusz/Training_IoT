@@ -6,8 +6,8 @@
 class SwitchFeatureController : public FeatureController
 {
 protected:
-  int pin;
-  bool onIsHigh;
+  int _pin;
+  bool _onIsHigh;
 
   void SetState(bool on);
 

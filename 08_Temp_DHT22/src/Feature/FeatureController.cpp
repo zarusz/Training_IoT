@@ -2,19 +2,26 @@
 
 FeatureController::FeatureController(int port, const char* type, DeviceContext* context)
 {
-    this->port = port;
-    this->type = type;
-    this->context = context;
+    _port = port;
+    _type = type;
+    _context = context;
 }
 
 FeatureController::~FeatureController()
 {
 }
 
-void FeatureController::PopulateDescription(JsonObject& featureDescription)
+void FeatureController::PopulateDescriptions(JsonArray& featureDescriptions)
 {
+  PopulateDescription(featureDescriptions, _type);
+}
+
+void FeatureController::PopulateDescription(JsonArray& featureDescriptions, const char* type)
+{
+  JsonObject& featureDescription = _context->GetSerializationProvider().CreateObject();
+  featureDescription["port"] = _port;
   featureDescription["type"] = type;
-  featureDescription["port"] = port;
+  featureDescriptions.add(featureDescription);
 }
 
 bool FeatureController::CanHandle(JsonObject& command)
@@ -22,7 +29,7 @@ bool FeatureController::CanHandle(JsonObject& command)
   const char* commandType = command["type"].asString();
   const int commandPort = command["port"].as<int>();
   // the FeatureController can handle the command if port and feature type matches
-  return port == commandPort && strcmp(type, commandType) == 0;
+  return _port == commandPort && strcmp(_type, commandType) == 0;
 }
 
 bool FeatureController::TryHandle(JsonObject& command)

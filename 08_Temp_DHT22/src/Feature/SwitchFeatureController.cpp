@@ -5,27 +5,27 @@
 SwitchFeatureController::SwitchFeatureController(int port, DeviceContext* context, int pin, bool onIsHigh)
   : FeatureController(port, FEATURE_TYPE_SWITCH, context)
 {
-  this->pin = pin;
-  this->onIsHigh = onIsHigh;
+  _pin = pin;
+  _onIsHigh = onIsHigh;
 
-  pinMode(pin, OUTPUT);
+  pinMode(_pin, OUTPUT);
   SetState(false);
 }
 
 void SwitchFeatureController::Handle(JsonObject& command)
 {
-  Serial.println("SwitchFeatureController:Handle");
+  Serial.println("[SWITCH] Handle");
 
   const bool on = command["on"].as<bool>();
 
-  Serial.printf("SwitchCommand for port %d with %s.\n", port, on ? "turn on" : "turn off");
+  Serial.printf("[SWITCH] SwitchCommand for port %d with %s.\n", _port, on ? "turn on" : "turn off");
   SetState(on);
 }
 
 void SwitchFeatureController::SetState(bool on)
 {
-  auto onState = on ? (onIsHigh ? HIGH : LOW) : (onIsHigh ? LOW : HIGH);
-  digitalWrite(pin, onState);
+  auto onState = on ? (_onIsHigh ? HIGH : LOW) : (_onIsHigh ? LOW : HIGH);
+  digitalWrite(_pin, onState);
 }
 
 void SwitchFeatureController::Loop()

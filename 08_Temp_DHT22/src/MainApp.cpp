@@ -11,9 +11,6 @@
 #include "Feature/FeatureController.h"
 #include "Feature/SwitchFeatureController.h"
 #include "Feature/LedFeatureController.h"
-//#include "FeatureControllers/TempFeatureController.h"
-//#include "FeatureControllers/IRTransceiverFeatureController.h"
-//#include "FeatureControllers/IRReceiverFeatureController.h"
 
 // update with a unique id
 #define DEVICE_UNIQUE_ID	"my_device_id"
@@ -70,8 +67,6 @@ MainApp::~MainApp()
 
 void MainApp::Init()
 {
-	// Initialize the BUILTIN_LED pin as an output
-	pinMode(BUILTIN_LED, OUTPUT);
 	Serial.begin(115200);
 
 	SetupWifi();
@@ -194,12 +189,9 @@ void MainApp::SendDeviceDescription()
 		descriptionEvent["deviceId"] = _deviceConfig.uniqueId;
 		JsonArray& featureDescriptions = descriptionEvent.createNestedArray("features");
 
-		for(auto featureIt = _features.begin(); featureIt != _features.end(); ++featureIt)
-		{
-			JsonObject& featureDescription = _serializationProvider.CreateObject();
-			(*featureIt)->PopulateDescription(featureDescription);
-			featureDescriptions.add(featureDescription);
-		}
+		std::for_each(_features.begin(), _features.end(), [&featureDescriptions](FeatureController* feature) {
+			feature->PopulateDescriptions(featureDescriptions);
+		});
 
 		_messageBus.Publish(TOPIC_REGISTER, descriptionEvent);
 }
