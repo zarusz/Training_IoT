@@ -6,14 +6,14 @@
 class TimeUtil
 {
 public:
-  static bool IntervalPassed(ulong& lastTime, uint interval)
+  static bool IntervalPassed(ulong& lastTimeMs, uint intervalMs)
   {
       ulong now = millis();
-      if (now - lastTime < interval) {
+      if (now - lastTimeMs < intervalMs) {
           // the time has not elapsed
           return false;
       }
-      lastTime = now;
+      lastTimeMs = now;
       return true;
   }
 };

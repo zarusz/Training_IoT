@@ -4,10 +4,13 @@
 
 #include "MainApp.h"
 #include <stdio.h>
+#include <algorithm>
 
 #include "Utils/TimeUtil.h"
+
 #include "Feature/FeatureController.h"
 #include "Feature/SwitchFeatureController.h"
+#include "Feature/LedFeatureController.h"
 //#include "FeatureControllers/TempFeatureController.h"
 //#include "FeatureControllers/IRTransceiverFeatureController.h"
 //#include "FeatureControllers/IRReceiverFeatureController.h"
@@ -40,16 +43,11 @@ MainApp::MainApp()
 	_features.push_back(new SwitchFeatureController(4, this, 4, false));
 	_features.push_back(new SwitchFeatureController(5, this, 5, false));
 
-/*
-	features.push_back(new SwitchFeatureController(10, this, 20, false));
-	features.push_back(new SwitchFeatureController(11, this, 21, false));
-	features.push_back(new SwitchFeatureController(12, this, 22, false));
-	features.push_back(new SwitchFeatureController(13, this, 23, false));
-	features.push_back(new SwitchFeatureController(14, this, 24, false));
-	features.push_back(new SwitchFeatureController(15, this, 25, false));
-	features.push_back(new SwitchFeatureController(16, this, 26, false));
-	features.push_back(new SwitchFeatureController(17, this, 27, false));
+	_features.push_back(new LedFeatureController(1, this, 13));
+	_features.push_back(new LedFeatureController(2, this, 12));
+	_features.push_back(new LedFeatureController(3, this, 14));
 
+/*
 	features.push_back(new TempFeatureController(30, 31, this, 2));
 	features.push_back(new IRReceiverFeatureController(41, this, 4));
 	features.push_back(new IRTransceiverFeatureController(40, this, 16));
@@ -64,8 +62,10 @@ MainApp::MainApp()
 MainApp::~MainApp()
 {
 	// destroy all the features
-	for (auto featureIt = _features.begin(); featureIt != _features.end(); ++featureIt)
-		delete *featureIt;
+	std::for_each(_features.begin(), _features.end(), [](FeatureController* feature) {
+		delete feature;
+	});
+	_features.clear();
 }
 
 void MainApp::Init()
@@ -178,9 +178,12 @@ void MainApp::OnLoop()
 		*/
 	}
 
-	// run loop on each feature instance
-	for (auto featureIt = _features.begin(); featureIt != _features.end(); ++featureIt)
-		(*featureIt)->Loop();
+	// run loop on each feature instance (the new C++11 lambda syntax)
+	std::for_each(_features.begin(), _features.end(), [](FeatureController* feature) {
+		feature->Loop();
+	});
+	// for (auto featureIt = _features.begin(); featureIt != _features.end(); ++featureIt)
+	//	(*featureIt)->Loop();
 }
 
 void MainApp::SendDeviceDescription()
@@ -203,19 +206,20 @@ void MainApp::SendDeviceDescription()
 
 void MainApp::OnCommand(JsonObject& command)
 {
-	Serial.println("HandleCommand (start)");
+	Serial.println("OnCommand (start)");
 
-	for(auto it = _features.begin(); it != _features.end(); ++it)
-		(*it)->TryHandle(command);
+	std::for_each(_features.begin(), _features.end(), [&command](FeatureController* feature) {
+		feature->TryHandle(command);
+	});
 
-	Serial.println("HandleCommand (finish)");
+	Serial.println("OnCommand (finish)");
 }
 
 
 /*
 void MainApp::ReconnectPubSub()
+// Loop until we're reconnected
 {
-	// Loop until we're reconnected
 	while (!pubSubClient.connected())
 	{
 		Serial.print("Attempting MQTT connection...");

@@ -121,8 +121,8 @@ bool postJson(const String& path, const String& postPayload)
   bool success = false;
   String url = String("http://") + server_host + path;
 
-  Serial.printf("Connecting to %s\n", url.c_str());
-  Serial.printf("Payload: %s\n", postPayload.c_str());
+  Serial.printf("[HTTP] Connecting to %s\n", url.c_str());
+  Serial.printf("[HTTP] Payload: %s\n", postPayload.c_str());
 
   HTTPClient http;
   http.begin(url);
@@ -159,7 +159,7 @@ bool getJson(const String& path, String& payload)
 {
   bool success = false;
   String url = String("http://") + server_host + path;
-  Serial.printf("Connecting to %s\n", url.c_str());
+  Serial.printf("[HTTP] Connecting to %s\n", url.c_str());
 
   HTTPClient http;
   http.begin(url);
@@ -175,7 +175,7 @@ bool getJson(const String& path, String& payload)
     {
       success = true;
       payload = http.getString();
-      Serial.printf("Response: %s\n", payload.length() > 0 ? payload.c_str() : "(empty)");
+      Serial.printf("[HTTP] Response: %s\n", payload.length() > 0 ? payload.c_str() : "(empty)");
     }
   }
   else

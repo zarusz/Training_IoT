@@ -22,8 +22,6 @@ private:
 	HttpMessageBus _messageBus;
 	//WiFiClient espClient;
 	//PubSubClient pubSubClient;
-	//String deviceInTopic;
-	//DeviceDescription deviceDescription;
 	std::vector<FeatureController*> _features;
 
 	ulong lastMsg = 0;
@@ -48,20 +46,12 @@ protected:
 	void SetupWifi();
 	//void ReconnectPubSub();
 
-	//bool DecodeMessage(byte* payload, unsigned int length, const pb_field_t* msg_fields, void* msg) const;
-	//bool EncodeMessage(byte* payload, unsigned int maxLength, unsigned int& length, const pb_field_t* msg_fields, const void* msg) const;
-
-	//void DebugRetrievedMessage(const char* topic, byte* payload, unsigned int length);
-
 	void OnStart();
 	void OnStop();
 	void OnLoop();
 
 	void SendDeviceDescription();
 	void OnCommand(JsonObject& command);
-
-public:
-	//bool PublishMessage(const char* topic, const pb_field_t* msg_fields, const void* msg);
 };
 
 

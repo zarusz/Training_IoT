@@ -1,14 +1,15 @@
 #include "HttpMessageBus.h"
 #include <ESP8266HTTPClient.h>
 #include "../Utils/TimeUtil.h"
+#include <algorithm>
 
 // pull every 2s
 #define PULL_INTERVAL 2000
 
-HttpMessageBus::HttpMessageBus(const char* serverHost, JsonSerializationProvider* provider, MessageHandler* handler)
+HttpMessageBus::HttpMessageBus(const char* serverHost, JsonSerializationProvider* serializationProvider, MessageHandler* handler)
 {
-  this->serverHost = serverHost;
-  this->provider = provider;
+  _serverHost = serverHost;
+  _serializationProvider = serializationProvider;
   SetHandler(handler);
 }
 
@@ -18,31 +19,30 @@ HttpMessageBus::~HttpMessageBus()
 
 bool HttpMessageBus::Publish(const char* topic, JsonObject& message)
 {
-  String payload = provider->Serialize(message);
+  String payload = _serializationProvider->Serialize(message);
   PostJson(topic, payload);
 }
 
 void HttpMessageBus::Subscribe(const char* topic)
 {
   // remember the topics
-  topics.insert(topic);
+  _topics.insert(topic);
 }
 
 void HttpMessageBus::Unsubscribe(const char* topic)
 {
-  topics.erase(topic);
+  _topics.erase(topic);
 }
 
 void HttpMessageBus::Loop()
 {
-  if (!TimeUtil::IntervalPassed(lastPulledTime, PULL_INTERVAL))
+  if (!TimeUtil::IntervalPassed(_lastPullTimeMs, PULL_INTERVAL))
     return;
 
-  for (auto topicIt = topics.begin(); topicIt != topics.end(); ++topicIt)
-  {
-    auto topic = *topicIt;
+  // The new C++11 lambda for each
+  std::for_each(_topics.begin(), _topics.end(), [this](const char* topic) {
     PullMessageForTopic(topic);
-  }
+  });
 }
 
 void HttpMessageBus::PullMessageForTopic(const char* topic)
@@ -50,7 +50,7 @@ void HttpMessageBus::PullMessageForTopic(const char* topic)
   String payload;
   if (GetJson(topic, payload))
   {
-    JsonObject& message = provider->Deserialize(payload);
+    JsonObject& message = _serializationProvider->Deserialize(payload);
     // check if deserialization was fine
     if (message.success())
     {
@@ -64,10 +64,10 @@ void HttpMessageBus::PullMessageForTopic(const char* topic)
 bool HttpMessageBus::PostJson(const char* path, const String& postPayload)
 {
   bool success = false;
-  String url = serverHost + path;
+  String url = _serverHost + path;
 
-  Serial.printf("Connecting to %s\n", url.c_str());
-  Serial.printf("Payload: %s\n", postPayload.c_str());
+  Serial.printf("[HTTP] Connecting to %s\n", url.c_str());
+  Serial.printf("[HTTP] Payload: %s\n", postPayload.c_str());
 
   HTTPClient http;
   http.begin(url);
@@ -81,13 +81,11 @@ bool HttpMessageBus::PostJson(const char* path, const String& postPayload)
 
     // file found at server
     if (httpCode == HTTP_CODE_OK)
-    {
       success = true;
-    }
   }
   else
   {
-    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
   }
 
   http.end();
@@ -97,8 +95,8 @@ bool HttpMessageBus::PostJson(const char* path, const String& postPayload)
 bool HttpMessageBus::GetJson(const char* path, String& payload)
 {
   bool success = false;
-  String url = serverHost + path;
-  Serial.printf("Connecting to %s\n", url.c_str());
+  String url = _serverHost + path;
+  Serial.printf("[HTTP] Connecting to %s\n", url.c_str());
 
   HTTPClient http;
   http.begin(url);
@@ -114,7 +112,7 @@ bool HttpMessageBus::GetJson(const char* path, String& payload)
     {
       success = true;
       payload = http.getString();
-      Serial.printf("Response: %s\n", payload.length() > 0 ? payload.c_str() : "(empty)");
+      Serial.printf("[HTTP] Response: %s\n", payload.length() > 0 ? payload.c_str() : "(empty)");
     }
   }
   else

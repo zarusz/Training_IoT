@@ -2,7 +2,7 @@
 
 void JsonSerializationProvider::ResetBuffer()
 {
-  jsonBuffer = StaticJsonBuffer<JSON_BUFFER_SIZE>();
+  _jsonBuffer = StaticJsonBuffer<JSON_BUFFER_SIZE>();
 }
 
 JsonObject& JsonSerializationProvider::CreateMessage()
@@ -13,13 +13,13 @@ JsonObject& JsonSerializationProvider::CreateMessage()
 
 JsonObject& JsonSerializationProvider::CreateObject()
 {
-  return jsonBuffer.createObject();
+  return _jsonBuffer.createObject();
 }
 
 JsonObject& JsonSerializationProvider::Deserialize(String& payload)
 {
   ResetBuffer();
-  return jsonBuffer.parseObject(payload.c_str());
+  return _jsonBuffer.parseObject(payload.c_str());
 }
 
 String JsonSerializationProvider::Serialize(JsonObject& m)

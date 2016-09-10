@@ -57,7 +57,7 @@ bool tryGetDeviceState(String& payload)
 {
   bool success = false;
   String url = String("http://") + server_host + "/api/device/" + device_id + "/state";
-  Serial.print("Connecting to ");
+  Serial.print("[HTTP] Connecting to ");
   Serial.println(url);
 
   HTTPClient http;
@@ -73,7 +73,7 @@ bool tryGetDeviceState(String& payload)
     if (httpCode == HTTP_CODE_OK)
     {
       payload = http.getString();
-      Serial.println("Response:");
+      Serial.println("[HTTP] Response:");
       Serial.println(payload);
       success = true;
     }
@@ -85,7 +85,7 @@ bool tryGetDeviceState(String& payload)
 
   http.end();
 
-  Serial.println("Closing connection");
+  Serial.println("[HTTP] Closing connection");
   Serial.println();
   return success;
 }

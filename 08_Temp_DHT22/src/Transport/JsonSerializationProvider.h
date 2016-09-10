@@ -9,7 +9,7 @@
 class JsonSerializationProvider //: public SerializationProvider<JsonObject>
 {
 private:
-  StaticJsonBuffer<JSON_BUFFER_SIZE> jsonBuffer;
+  StaticJsonBuffer<JSON_BUFFER_SIZE> _jsonBuffer;
 
   void ResetBuffer();
 

@@ -10,10 +10,10 @@
 class HttpMessageBus : public MessageBus
 {
 private:
-	String serverHost;
- 	JsonSerializationProvider* provider;
-	std::set<const char*> topics;
-	ulong lastPulledTime;
+	String _serverHost;
+ 	JsonSerializationProvider* _serializationProvider;
+	std::set<const char*> _topics;
+	ulong _lastPullTimeMs;
 
 	bool PostJson(const char* path, const String& postPayload);
 	bool GetJson(const char* path, String& payload);
@@ -21,7 +21,7 @@ private:
 	void PullMessageForTopic(const char* topic);
 
 public:
-	HttpMessageBus(const char* serverHost, JsonSerializationProvider* provider, MessageHandler* handler);
+	HttpMessageBus(const char* serverHost, JsonSerializationProvider* serializationProvider, MessageHandler* handler);
 	virtual ~HttpMessageBus();
 
 public:
