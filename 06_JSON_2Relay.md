@@ -311,6 +311,8 @@ The other part of the relay module has 3 screws we can attach the other high vol
 
 The module consists of 2 relays which are [opto-isolated](https://en.wikipedia.org/wiki/Opto-isolator). This provides electric protection for our ESP device. The module also has two small blue LEDs that become lit when a relay is on.   
 
+Link to the [online store](http://elty.pl/pl/p/Modul-z-2-przekaznikami-z-transoptorami-/668).
+
 ##### Quick Exercise
 Go ahead and connect the relay switch to +5V and GND. Connect the IN1/IN2 to GND to see that the respective relay becomes closed (and the status LED turns on).
 

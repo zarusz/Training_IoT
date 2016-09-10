@@ -1,9 +1,11 @@
+using System;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Autofac;
 using Autofac.Integration.Mvc;
+using TrainingIoT.RemoteControl.App.ErrorLogging;
 
 namespace TrainingIoT.RemoteControl.App
 {
@@ -72,7 +74,7 @@ namespace TrainingIoT.RemoteControl.App
 
         private static void RegisterFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new HandleErrorAttribute());
+            filters.Add(new LoggingHandleErrorAttribute());
         }
 
     }

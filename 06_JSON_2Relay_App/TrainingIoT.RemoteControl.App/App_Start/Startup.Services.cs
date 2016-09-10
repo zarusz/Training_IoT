@@ -4,6 +4,7 @@ using SlimMessageBus.Core.Config;
 using SlimMessageBus.ServiceLocator.Config;
 using TrainingIoT.RemoteControl.App.Comm;
 using TrainingIoT.RemoteControl.App.Domain.Impl;
+using TrainingIoT.RemoteControl.App.ErrorLogging;
 
 namespace TrainingIoT.RemoteControl.App
 {
@@ -11,6 +12,8 @@ namespace TrainingIoT.RemoteControl.App
     {
         public static void RegisterServices(ContainerBuilder builder)
         {
+            builder.RegisterType<ErrorLoggingMiddleware>();
+
             builder.RegisterType<MemoryDeviceRepository>()
                 .AsImplementedInterfaces()
                 .SingleInstance();

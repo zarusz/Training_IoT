@@ -1,3 +1,4 @@
+using System.Linq;
 using SlimMessageBus;
 using TrainingIoT.RemoteControl.App.Domain;
 using TrainingIoT.RemoteControl.App.Messages;
@@ -24,17 +25,19 @@ namespace TrainingIoT.RemoteControl.App.Comm
                 return;
             }
 
-            var feature = device.GetFeatureByPort(e.Port);
+            var features = device.GetFeaturesByPort(e.Port).ToList();
 
             var temperatureSensorFeatureEvent = e as TemperatureSensorFeatureEvent;
             if (temperatureSensorFeatureEvent != null)
             {
-                ((TemperatureSensorFeature)feature).Measured(temperatureSensorFeatureEvent.Temperature);
+                var tempSensorFeature = features.OfType<TemperatureSensorFeature>().SingleOrDefault();
+                tempSensorFeature?.Measured(temperatureSensorFeatureEvent.Temperature);
             }
             var humiditySensorFeatureEvent = e as HumiditySensorFeatureEvent;
             if (humiditySensorFeatureEvent != null)
             {
-                ((HumiditySensorFeature)feature).Measured(humiditySensorFeatureEvent.Humidity);
+                var humidSensorFeature = features.OfType<HumiditySensorFeature>().SingleOrDefault();
+                humidSensorFeature?.Measured(humiditySensorFeatureEvent.Humidity);
             }
 
         }

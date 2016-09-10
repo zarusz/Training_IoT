@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using Autofac;
 using Autofac.Extras.CommonServiceLocator;
+using log4net.Config;
 using Microsoft.Owin;
 using Microsoft.Practices.ServiceLocation;
 using Owin;
@@ -12,6 +13,8 @@ namespace TrainingIoT.RemoteControl.App
     {
         public void Configuration(IAppBuilder app)
         {
+            XmlConfigurator.Configure();
+
             // Get your HttpConfiguration. In OWIN, you'll create one rather than using GlobalConfiguration.
             var config = new HttpConfiguration();
 

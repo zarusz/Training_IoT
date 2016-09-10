@@ -26,9 +26,6 @@ namespace TrainingIoT.RemoteControl.App
             cfg.CreateMap<LedFeature, LedFeatureModel>()
                 .IncludeBase<SwitchFeature, SwitchFeatureModel>();
 
-            cfg.CreateMap<LedFeature, LedFeatureModel>()
-                .IncludeBase<DeviceFeature, FeatureModel>();
-
             cfg.CreateMap<TemperatureSensorFeature, TemperatureSensorFeatureModel>()
                 .IncludeBase<DeviceFeature, FeatureModel>();
 
