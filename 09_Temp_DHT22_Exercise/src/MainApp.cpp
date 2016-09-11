@@ -12,6 +12,7 @@
 #include "Feature/SwitchFeatureController.h"
 #include "Feature/LedFeatureController.h"
 #include "Feature/DHT22FeatureController.h"
+#include "Feature/MotionSensorFeatureController.h"
 
 // update with a unique id
 #define DEVICE_UNIQUE_ID	"my_device_id"
@@ -24,6 +25,7 @@
 #define SERVER_HOST				"http://iot-remotecontrol-2.azurewebsites.net/api/device/"
 
 #define TOPIC_REGISTER		"register"
+#define TOPIC_SENSOR			"sensor"
 
 MainApp::MainApp()
 	: _deviceConfig(DEVICE_UNIQUE_ID, NETWORK_NAME, NETWORK_PASSWORD),
@@ -41,7 +43,8 @@ MainApp::MainApp()
 	//_features.push_back(new LedFeatureController(2, this, 12));
 	//_features.push_back(new LedFeatureController(3, this, 14));
 
-	_features.push_back(new DHT22FeatureController(6, this, 12));
+	_features.push_back(new DHT22FeatureController(6, this, 12, TOPIC_SENSOR));
+	_features.push_back(new MotionSensorFeatureController(7, this, 14, TOPIC_SENSOR));
 }
 
 MainApp::~MainApp()

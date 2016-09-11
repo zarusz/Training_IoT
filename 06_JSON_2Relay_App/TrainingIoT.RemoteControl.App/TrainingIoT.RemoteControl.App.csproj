@@ -232,6 +232,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="Domain\MotionSensorFeature.cs" />
     <Compile Include="ErrorLogging\LoggingHandleErrorAttribute.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\Startup.WebApi.cs" />
@@ -253,7 +254,7 @@
     <Compile Include="Domain\TemperatureSensorFeature.cs" />
     <Compile Include="Messages\DeviceDescriptionEvent.cs" />
     <Compile Include="Messages\HumiditySensorFeatureEvent.cs" />
-    <Compile Include="Messages\JsonConverters\SensorFeatureEventConverter.cs" />
+    <Compile Include="Messages\MotionSensorFeatureEvent.cs" />
     <Compile Include="Messages\SensorFeatureEvent.cs" />
     <Compile Include="Messages\SwitchFeatureCommand.cs" />
     <Compile Include="Messages\TemperatureSensorFeatureEvent.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="Models\HumiditySensorFeatureModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LedFeatureModel.cs" />
+    <Compile Include="Models\MotionSensorFeatureModel.cs" />
     <Compile Include="Models\SwitchFeatureModel.cs" />
     <Compile Include="Models\TemperatureSensorFeatureModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -327,6 +329,7 @@
     <Content Include="Views\RemoteControl\LedFeature.cshtml" />
     <Content Include="Views\RemoteControl\TemperatureSensorFeature.cshtml" />
     <Content Include="Views\RemoteControl\HumiditySensorFeature.cshtml" />
+    <Content Include="Views\RemoteControl\MotionSensorFeature.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -339,6 +342,12 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TrainingIoT.RemoteControl.Extension.Json\TrainingIoT.RemoteControl.Extension.Json.csproj">
+      <Project>{392ec27d-3d72-4716-8c95-fceebc5bf576}</Project>
+      <Name>TrainingIoT.RemoteControl.Extension.Json</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

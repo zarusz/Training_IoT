@@ -14,8 +14,8 @@ protected:
 public:
   SwitchFeatureController(int port, DeviceContext* context, int pin, bool onIsHigh);
 
+  // override of FeatureController
   virtual void Handle(JsonObject& command);
-  virtual void Loop();
 };
 
 #endif

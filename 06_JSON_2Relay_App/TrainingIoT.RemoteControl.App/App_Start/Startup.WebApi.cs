@@ -6,7 +6,7 @@ using Autofac.Integration.WebApi;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using TrainingIoT.RemoteControl.App.Messages.JsonConverters;
+using TrainingIoT.RemoteControl.Extension.Json.JsonConverters;
 
 namespace TrainingIoT.RemoteControl.App
 {
@@ -40,7 +40,8 @@ namespace TrainingIoT.RemoteControl.App
             // For debugging ease display JSON when browser requests text/plan or html.
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/plain"));
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/html"));
-            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new SensorFeatureEventConverter());
+
+            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new JsonInheritanceConverter());
 
             // Web API routes
             config.MapHttpAttributeRoutes();

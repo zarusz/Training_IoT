@@ -17,8 +17,6 @@ namespace TrainingIoT.RemoteControl.App
             cfg.CreateMap<Device, DeviceDetailModel>();
             cfg.CreateMap<DeviceFeature, FeatureModel>()
                 .ForMember(x => x.DeviceId, x => x.MapFrom(d => d.Device.DeviceId));
-
-
                 
             cfg.CreateMap<SwitchFeature, SwitchFeatureModel>()
                 .IncludeBase<DeviceFeature, FeatureModel>();
@@ -30,6 +28,9 @@ namespace TrainingIoT.RemoteControl.App
                 .IncludeBase<DeviceFeature, FeatureModel>();
 
             cfg.CreateMap<HumiditySensorFeature, HumiditySensorFeatureModel>()
+                .IncludeBase<DeviceFeature, FeatureModel>();
+
+            cfg.CreateMap<MotionSensorFeature, MotionSensorFeatureModel>()
                 .IncludeBase<DeviceFeature, FeatureModel>();
         }
 

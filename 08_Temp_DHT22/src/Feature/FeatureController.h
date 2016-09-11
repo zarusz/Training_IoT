@@ -19,7 +19,7 @@ public:
   virtual void PopulateDescriptions(JsonArray& featureDescriptions);
 
   // The feature can do some processing if needed.
-  virtual void Loop() = 0;
+  virtual void Loop();
   // Attempts to match the command to this feature and handle.
   virtual bool TryHandle(JsonObject& command);
 
@@ -28,7 +28,7 @@ protected:
   // Checks if the feature is able to handle the command (port/type match).
   virtual bool CanHandle(JsonObject& command);
   // The feature has a message to handle.
-  virtual void Handle(JsonObject& command) = 0;
+  virtual void Handle(JsonObject& command);
 };
 
 

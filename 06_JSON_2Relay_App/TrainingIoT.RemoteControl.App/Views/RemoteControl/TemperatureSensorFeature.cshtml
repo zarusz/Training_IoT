@@ -2,7 +2,11 @@
 <div class="form-group">
     <label class="col-sm-2 control-label">Temperature</label>
     <div class="col-sm-10">
-        <p class="form-control-static">@Model.Temperature &deg;C</p>
+        <p class="form-control-static">
+            <span>@Model.Temperature &deg;C</span>
+            <br />
+            <span>Updated: @Model.Updated</span>
+        </p>
     </div>
 </div>
 

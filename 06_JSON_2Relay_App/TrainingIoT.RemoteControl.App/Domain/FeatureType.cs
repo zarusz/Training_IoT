@@ -5,6 +5,7 @@ namespace TrainingIoT.RemoteControl.App.Domain
         @Switch,
         Led,
         TemperatureSensor,
-        HumiditySensor
+        HumiditySensor,
+        MotionSensor
     }
 }

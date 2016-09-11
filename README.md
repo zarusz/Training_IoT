@@ -91,10 +91,10 @@ More details are provided on the [ESP Arduino wiki](https://github.com/esp8266/A
 * [05_RemoteControl](05_RemoteControl.md)
 * [06_JSON_2Relay](06_JSON_2Relay.md)
 * [07_JSON_2Relay_Exercise](07_JSON_2Relay_Exercise.md)
+* [08_Temp_Motion](08_Temp_Motion.md)
+* [09_Temp_Motion_Exercise](09_Temp_Motion_Exercise.md)
 * ToDo:
-	* [08_Temp_DHT22](08_Temp_DHT22.md)
-	* [09_MQTT](09_MQTT.md)
-	* [10_Motion_Sensor](10_Motion_Sensor.md)
+	* [10_MQTT](10_MQTT.md)
 	* [11_IR](11_IR.md)
 
 

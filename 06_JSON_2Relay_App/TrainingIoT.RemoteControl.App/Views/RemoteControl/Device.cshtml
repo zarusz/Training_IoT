@@ -26,6 +26,10 @@
         {
             @Html.Partial("HumiditySensorFeature", (HumiditySensorFeatureModel) feature)
         }
+        else if (feature.Type == FeatureType.MotionSensor)
+        {
+            @Html.Partial("MotionSensorFeature", (MotionSensorFeatureModel) feature)
+        }
     }
 </form>
 

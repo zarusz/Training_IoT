@@ -8,20 +8,18 @@ class DHT22FeatureController : public FeatureController
 {
 protected:
   int _pin;
+  const char* _topic;
   DHT _dht;
-  ulong _lastMeasureT;
-  ulong _lastMeasureH;
+  ulong _lastMeasure;
+  ulong _lastWasTemp;
 
   void PublishMeasureEvent(bool isTemp, float value);
 
 public:
-  DHT22FeatureController(int port, DeviceContext* context, int pin);
+  DHT22FeatureController(int port, DeviceContext* context, int pin, const char* topic);
 
   // override of FeatureController
   virtual void PopulateDescriptions(JsonArray& featureDescriptions);
-  virtual bool CanHandle(JsonObject& command);
-
-  virtual void Handle(JsonObject& command);
   virtual void Loop();
 };
 

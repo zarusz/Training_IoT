@@ -1,0 +1,12 @@
+﻿@model TrainingIoT.RemoteControl.App.Models.MotionSensorFeatureModel
+<div class="form-group">
+    <label class="col-sm-2 control-label">Motion</label>
+    <div class="col-sm-10">
+        <p class="form-control-static">
+            <span>@(Model.Motion ? "Yes" : "No")</span>
+            <br/>
+            <span>Updated: @Model.Updated</span>
+        </p>
+    </div>
+</div>
+

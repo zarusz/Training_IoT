@@ -1,4 +1,4 @@
-using System.Linq;
+using log4net;
 using SlimMessageBus;
 using TrainingIoT.RemoteControl.App.Domain;
 using TrainingIoT.RemoteControl.App.Messages;
@@ -7,6 +7,8 @@ namespace TrainingIoT.RemoteControl.App.Comm
 {
     public class SensorFeatureEventHandler : IHandles<SensorFeatureEvent>
     {
+        private static readonly ILog Log = LogManager.GetLogger(typeof (SensorFeatureEventHandler));
+
         private readonly IDeviceRepository _deviceRepository;
 
         public SensorFeatureEventHandler(IDeviceRepository deviceRepository)
@@ -25,19 +27,23 @@ namespace TrainingIoT.RemoteControl.App.Comm
                 return;
             }
 
-            var features = device.GetFeaturesByPort(e.Port).ToList();
-
             var temperatureSensorFeatureEvent = e as TemperatureSensorFeatureEvent;
             if (temperatureSensorFeatureEvent != null)
             {
-                var tempSensorFeature = features.OfType<TemperatureSensorFeature>().SingleOrDefault();
+                var tempSensorFeature = device.GetFeatureByPort<TemperatureSensorFeature>(e.Port);
                 tempSensorFeature?.Measured(temperatureSensorFeatureEvent.Temperature);
             }
             var humiditySensorFeatureEvent = e as HumiditySensorFeatureEvent;
             if (humiditySensorFeatureEvent != null)
             {
-                var humidSensorFeature = features.OfType<HumiditySensorFeature>().SingleOrDefault();
+                var humidSensorFeature = device.GetFeatureByPort<HumiditySensorFeature>(e.Port);
                 humidSensorFeature?.Measured(humiditySensorFeatureEvent.Humidity);
+            }
+            var motionSensorFeatureEvent = e as MotionSensorFeatureEvent;
+            if (motionSensorFeatureEvent != null)
+            {
+                var motionSensorFeature = device.GetFeatureByPort<MotionSensorFeature>(e.Port);
+                motionSensorFeature?.Measured(motionSensorFeatureEvent.Motion);
             }
 
         }

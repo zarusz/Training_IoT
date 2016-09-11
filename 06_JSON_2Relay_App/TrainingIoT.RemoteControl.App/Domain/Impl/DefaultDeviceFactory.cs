@@ -37,6 +37,9 @@ namespace TrainingIoT.RemoteControl.App.Domain.Impl
 
                 case FeatureType.HumiditySensor:
                     return new HumiditySensorFeature(device, f.Type, f.Port);
+
+                case FeatureType.MotionSensor:
+                    return new MotionSensorFeature(device, f.Type, f.Port);
             }
 
             throw new NotSupportedException($"The feature type {f.Type} is not supported.");

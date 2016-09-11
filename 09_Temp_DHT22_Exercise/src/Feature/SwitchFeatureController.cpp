@@ -27,8 +27,3 @@ void SwitchFeatureController::SetState(bool on)
   auto onState = on ? (_onIsHigh ? HIGH : LOW) : (_onIsHigh ? LOW : HIGH);
   digitalWrite(_pin, onState);
 }
-
-void SwitchFeatureController::Loop()
-{
-  // nothing to do for a switch
-}

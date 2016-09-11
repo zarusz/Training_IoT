@@ -24,12 +24,9 @@ void FeatureController::PopulateDescription(JsonArray& featureDescriptions, cons
   featureDescriptions.add(featureDescription);
 }
 
-bool FeatureController::CanHandle(JsonObject& command)
+void FeatureController::Loop()
 {
-  const char* commandType = command["type"].asString();
-  const int commandPort = command["port"].as<int>();
-  // the FeatureController can handle the command if port and feature type matches
-  return _port == commandPort && strcmp(_type, commandType) == 0;
+  // nothing to do - override in subclass
 }
 
 bool FeatureController::TryHandle(JsonObject& command)
@@ -40,4 +37,17 @@ bool FeatureController::TryHandle(JsonObject& command)
     return true;
   }
   return false;
+}
+
+bool FeatureController::CanHandle(JsonObject& command)
+{
+  const char* commandType = command["type"].asString();
+  const int commandPort = command["port"].as<int>();
+  // the FeatureController can handle the command if port and feature type matches
+  return _port == commandPort && strcmp(_type, commandType) == 0;
+}
+
+void FeatureController::Handle(JsonObject& command)
+{
+  // nothing - need to override in subclass
 }

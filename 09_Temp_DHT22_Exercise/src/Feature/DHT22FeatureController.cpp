@@ -4,17 +4,17 @@
 #define FEATURE_TYPE_TEMPERATURE  "temperatureSensor"
 #define FEATURE_TYPE_HUMIDITY     "humiditySensor"
 #define MEASURE_INTERVAL          5000
-#define TOPIC_SENSOR              "sensor"
 
-DHT22FeatureController::DHT22FeatureController(int port, DeviceContext* context, int pin)
+DHT22FeatureController::DHT22FeatureController(int port, DeviceContext* context, int pin, const char* topic)
   : FeatureController(port, FEATURE_TYPE_TEMPERATURE, context),
     _dht(pin, DHT22)
 {
   _pin = pin;
+  _topic = topic;
   _dht.begin();
-  _lastMeasureT = millis();
+  _lastMeasure = millis();
   // postpone humidity measure by half the interval
-  _lastMeasureH = _lastMeasureT + MEASURE_INTERVAL / 2;
+  _lastWasTemp = false;
 }
 
 void DHT22FeatureController::PopulateDescriptions(JsonArray& featureDescriptions)
@@ -23,27 +23,31 @@ void DHT22FeatureController::PopulateDescriptions(JsonArray& featureDescriptions
   PopulateDescription(featureDescriptions, FEATURE_TYPE_HUMIDITY);
 }
 
-bool DHT22FeatureController::CanHandle(JsonObject& command)
-{
-  const char* commandType = command["type"].asString();
-  const int commandPort = command["port"].as<int>();
-  // the FeatureController can handle the command if port and feature type matches
-  return _port == commandPort && (strcmp(_type, commandType) == 0 || strcmp(FEATURE_TYPE_HUMIDITY, commandType) == 0);
-}
-
-void DHT22FeatureController::Handle(JsonObject& command)
-{
-  // nothing to handle
-}
-
 void DHT22FeatureController::Loop()
 {
   // Reading temperature or humidity takes about 250 milliseconds!
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
 
+  if (!TimeUtil::IntervalPassed(_lastMeasure, MEASURE_INTERVAL))
+  {
+    return;
+  }
   bool failed = false;
 
-  if (TimeUtil::IntervalPassed(_lastMeasureT, MEASURE_INTERVAL))
+  _lastWasTemp = !_lastWasTemp;
+  // when last temp was measured, this time measure humidity
+  if (_lastWasTemp)
+  {
+    // Read humidity (%)
+    float h = _dht.readHumidity();
+    if (!isnan(h)) {
+      Serial.printf("[DHT22] Humidity: %d %%\n", (int)h);
+      PublishMeasureEvent(false, h);
+    } else {
+      failed = true;
+    }
+  }
+  else
   {
     // Read temperature (Celsius)
     float t = _dht.readTemperature();
@@ -55,19 +59,8 @@ void DHT22FeatureController::Loop()
     }
   }
 
-  if (TimeUtil::IntervalPassed(_lastMeasureH, MEASURE_INTERVAL))
+  if (failed)
   {
-    // Read humidity (%)
-    float h = _dht.readHumidity();
-    if (!isnan(h)) {
-      Serial.printf("[DHT22] Humidity: %d %%\n", (int)h);
-      PublishMeasureEvent(false, h);
-    } else {
-      failed = true;
-    }
-  }
-
-  if (failed) {
     Serial.println("[DHT22] Failed to read from DHT sensor!");
   }
 }
@@ -90,5 +83,5 @@ void DHT22FeatureController::PublishMeasureEvent(bool isTemp, float value)
     }
 
     // publish the event
-    _context->GetMessageBus().Publish(TOPIC_SENSOR, measureEvent);
+    _context->GetMessageBus().Publish(_topic, measureEvent);
 }
