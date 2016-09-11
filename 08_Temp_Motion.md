@@ -1,21 +1,21 @@
-### 08. DHT22 - Temperature/Humidity Sensor (`08_Temp_DHT22`)
+## 08. Temperature/Humidity and Motion Sensors  (`08_Temp_Motion`)
 
 In this exercise we will:
-* Connect an actual temperature and humidity sensors.
-* Learn about DHT22 sensor.
+* Connect an actual temperature and humidity sensor (DHT-22).
+* Connect an motion sensor (PIR HC-SR501).
 * Push sensor readings to the web app.
 * Apply some refactor to the previous device code in order to improve the app architecture.
 
 The web app version from `06_JSON_2Relay_App` will be used.
-The device code is in `08_Temp_DHT22`.
+The device code is in `08_Temp_Motion`.
 
-### After the refactoring
+### Refactoring
 
 Up until now most of the code was more procedural C than object oriented C++. Also our solution now is capable of handling many endpoint types.
 
 ToDo
 
-### Running the device sketch
+Running the device sketch:
 
 ```
 [MainApp] Connecting to IoT_Network
@@ -36,9 +36,6 @@ You can control the device from the test web app: http://iot-remotecontrol-2.azu
 ### New Hardware Part: DHT-22 - Humidity and Temperature Sensor
 
 The DHT-22 is a low cost humidity and temperature sensor with a single wire digital interface.
-
-#### Hardware
-
 DHT-22 Specs:
 * 3.3-6V Input
 * 1-1.5mA measuring current
@@ -72,7 +69,7 @@ Open the provided link to view an example how to use it.
 #### Exercise
 
 Push humidity/temperature readings to web app:
-  * Connect the DHT22 sensor:
+  * Connect the DHT-22 sensor:
     * Use GPIO pin `12` to connect DHT-22 data pin.
     * Connect `Vcc` to `+3.3V` voltage.
   * Install library via *Library Manager*: `platformio lib install "DHT sensor library"`.
@@ -80,8 +77,9 @@ Push humidity/temperature readings to web app:
     * Notice we have one feature controller to measure both temperature and humidity.
     * Use the controller class `Loop()` method to read the sensor and send out messages to topic `sensor`.
     * Use port `6`.
-  * Push the data every 10 seconds. Use the `TimeUtil::IntervalPassed()` method to avoid blocking the application loop.
-  * Ideally make readings of humidity and temperature and send message sending with a different time offset.  
+  * Push the data every 10 seconds.
+    * Use the `TimeUtil::IntervalPassed()` method to avoid blocking the application loop.
+    * After each 10 second interval send only one humidity or temperature e.g.: 10s, temp, 10s, humidity, 10s, temp, 10s, humidity.
   * The web app already understands `temperatureSensor` and `humiditySensor` feature types.
 
 To recall from laboratory `06_JSON_2Relay`, the temperature/humidity sensor reading JSON are:
@@ -103,3 +101,60 @@ To recall from laboratory `06_JSON_2Relay`, the temperature/humidity sensor read
 	"humidity": 43.4
 }
 ```
+
+
+### New Hardware Part: PIR HC-SR501 - Motion Sensor
+
+Specs
+
+* 4.5-20V DC Input
+* Current 50uA
+* Output signal 0,3V or 5V
+* Field of view 110 degree
+* Max Distance 7m
+
+Wyzwalanie powtarzalne\niepowtarzalane: H - Yes, L - No, - w zależności od tego ustawienia stan wysoki jest utrzymywany tak długo jak jest wykrywany ruch lub tylko impulsami po wykryciu ruchu
+
+![](assets/motion_sensor.jpg)
+
+PIR HC-SR501 pins from left to right:
+
+Pin | Function
+----|----------
+1   | Vcc - power supply
+2   | Out - HIGH when movement detected, otherwise LOW
+3   | GND
+
+The sensor has some customization:
+* `T1` - duration of HIGH when motion detected.
+* `T2` - sensitivity of sensor (distance).
+* `H` - (mode) keeps `Out` HIGH while motion is happening
+* `L` - (mode) keeps `Out` HIGH only during first movement detection.
+
+Link to the [online store 1](https://botland.com.pl/czujniki-ruchu/1655-czujnik-ruchu-pir-hc-sr501.html) and [online store 2](http://elty.pl/pl/p/Czujnik-ruchu-PIR-HC-SR501/264).
+
+#### Exercise
+
+Push motion events to web app:
+  * Connect the motion sensor:
+    * Use GPIO pin `14` to connect sensor `Out` pin.
+    * Connect `Vcc` to `+3.3V` voltage.
+  * Add the relevant `MotionFeatureController` class and register them in `MainApp` constructor.
+    * Use the controller class `Loop()` method to read the sensor and send out messages to topic `sensor`.
+    * Use port `7`.
+  * Push the data onlu on state change and not often than every 3 seconds.
+    * Use the `TimeUtil::IntervalPassed()` method to avoid blocking the application loop.
+  * The web app already understands `motionSensor` feature types.
+
+The motion message that the web app understands:
+
+```json
+{
+	"type": "motionSensor",
+	"port": 7,
+	"deviceId": "my_device_id",
+	"motion": true
+}
+```
+
+Make sure to send this to the `sensor` topic (same as for the temperature/humidity readings).
