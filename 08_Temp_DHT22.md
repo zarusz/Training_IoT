@@ -48,7 +48,7 @@ DHT-22 Specs:
 * +/- 2% RH accuracy
 * +/- 0.5 degrees C
 
-ToDo: add pictures
+![](assets/DHT22.jpg)
 
 DHT-22 pins from left to right:
 
@@ -69,7 +69,7 @@ There are few libraries to work with the DHT-22 sensor. The [DHT sensor library]
 
 Open the provided link to view an example how to use it.
 
-#### Exercise 1
+#### Exercise
 
 Push humidity/temperature readings to web app:
   * Connect the DHT22 sensor:
