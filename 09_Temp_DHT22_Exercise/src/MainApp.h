@@ -20,13 +20,7 @@ private:
 	DeviceConfig _deviceConfig;
 	JsonSerializationProvider _serializationProvider;
 	HttpMessageBus _messageBus;
-	//WiFiClient espClient;
-	//PubSubClient pubSubClient;
 	std::vector<FeatureController*> _features;
-
-	ulong lastMsg = 0;
-	char msg[256];
-	int value = 0;
 
 public:
 	MainApp();
@@ -45,7 +39,6 @@ public:
 
 protected:
 	void SetupWifi();
-	//void ReconnectPubSub();
 
 	void OnStart();
 	void OnStop();

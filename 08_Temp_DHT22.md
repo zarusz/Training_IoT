@@ -18,17 +18,17 @@ ToDo
 ### Running the device sketch
 
 ```
-Connecting to IoT_Network
+[MainApp] Connecting to IoT_Network
 ..
-WiFi connected
-IP: 192.168.2.148
-Starting...
-Sending DeviceDescription...
+[MainApp] WiFi connected
+[MainApp] IP: 192.168.2.148
+[MainApp] Starting...
+[MainApp] Sending DeviceDescription...
 [HTTP] Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/register
 [HTTP] Payload: {"deviceId":"my_device_id","features":[{"type":"switch","port":4},{"type":"switch","port":5},{"type":"led","port":1},{"type":"led","port":2},{"type":"led","port
 ":3}]}
 [HTTP] POST... response code: 200, description:
-Started.
+[MainApp] Started.
 ```
 
 You can control the device from the test web app: http://iot-remotecontrol-2.azurewebsites.net/
