@@ -66,7 +66,7 @@ There are few libraries to work with the DHT-22 sensor. The [DHT sensor library]
 
 Open the provided link to view an example how to use it.
 
-#### Exercise
+#### Exercise 1
 
 Push humidity/temperature readings to web app:
   * Connect the DHT-22 sensor:
@@ -113,8 +113,6 @@ Specs
 * Field of view 110 degree
 * Max Distance 7m
 
-Wyzwalanie powtarzalne\niepowtarzalane: H - Yes, L - No, - w zależności od tego ustawienia stan wysoki jest utrzymywany tak długo jak jest wykrywany ruch lub tylko impulsami po wykryciu ruchu
-
 ![](assets/motion_sensor.jpg)
 
 PIR HC-SR501 pins from left to right:
@@ -133,7 +131,7 @@ The sensor has some customization:
 
 Link to the [online store 1](https://botland.com.pl/czujniki-ruchu/1655-czujnik-ruchu-pir-hc-sr501.html) and [online store 2](http://elty.pl/pl/p/Czujnik-ruchu-PIR-HC-SR501/264).
 
-#### Exercise
+#### Exercise 2
 
 Push motion events to web app:
   * Connect the motion sensor:
