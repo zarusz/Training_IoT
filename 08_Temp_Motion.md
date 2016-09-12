@@ -9,13 +9,49 @@ In this exercise we will:
 The web app version from `06_JSON_2Relay_App` will be used.
 The device code is in `08_Temp_Motion`.
 
-### Refactoring
+We are using the connections from previous exercise:
 
-Up until now most of the code was more procedural C than object oriented C++. Also our solution now is capable of handling many endpoint types.
+ESP GPIO | Port | What
+---|---|---------------
+13 | 1 | LED (with resistor)
+12 | 2 | LED (with resistor)
+14 | 3 | LED (with resistor)
+ 4 | 4 | `IN1` from 2-Relay Module
+ 5 | 5 | `IN2` from 2-Relay Module
 
-ToDo
+### After refactoring
 
-Running the device sketch:
+Up until now most of the code was more procedural C than object-oriented C++. Also our solution now is capable of handling many endpoint types.
+
+After refactoring, we have these major classes:
+* `FeatureController` - the core for each of the features our device supports.
+* `MainApp` - is the main device program entry point.
+* `DeviceContext` - access point to relevant objects
+* `DeviceConfig` - stores relevant configuration values.
+* `JsonSerializationProvider` - responsible for serialization of JSON messages.
+* `HttpMessageBus` - responsible for transporting messages between device and message bus over HTTP protocol.
+
+Whenever a new control device or sensor gets added we would have to create (or use) one of the subclasses of `FeatureController`. We also register the the feature instance inside the `MainApp` constructor:
+
+```cpp
+// define all the features
+_features.push_back(new SwitchFeatureController(4, this, 4, false));
+_features.push_back(new SwitchFeatureController(5, this, 5, false));
+
+_features.push_back(new LedFeatureController(1, this, 13));
+_features.push_back(new LedFeatureController(2, this, 12));
+_features.push_back(new LedFeatureController(3, this, 14));
+```
+
+The `FeatureController` class has two virtual methods that the subclass can override:
+* `void Loop()` - used to execute logic every run of the device loop. This would include reading sensor data and sending messages with the measurements.
+* `void Handle(JsonObject& command)` - used to handle incoming messages (commands) for this feature instance (port & type match).
+
+Have a look at the `SwitchFeatureController`.
+
+### Running the program
+
+When running the device sketch the *Serial Monitor* outputs:
 
 ```
 [MainApp] Connecting to IoT_Network
@@ -31,7 +67,7 @@ Running the device sketch:
 [MainApp] Started.
 ```
 
-You can control the device from the test web app: http://iot-remotecontrol-2.azurewebsites.net/
+The device can be controlled from the test web app: http://iot-remotecontrol-2.azurewebsites.net/
 
 ### New Hardware Part: DHT-22 - Humidity and Temperature Sensor
 
@@ -155,4 +191,4 @@ The motion message that the web app understands:
 }
 ```
 
-Make sure to send this to the `sensor` topic (same as for the temperature/humidity readings).
+Make sure to send this message to the `sensor` topic (same as for the temperature/humidity readings).
