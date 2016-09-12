@@ -73,7 +73,7 @@ Push humidity/temperature readings to web app:
     * Use GPIO pin `12` to connect DHT-22 data pin.
     * Connect `Vcc` to `+3.3V` voltage.
   * Install library via *Library Manager*: `platformio lib install "DHT sensor library"`.
-  * Add the relevant `DHT22FeatureController` class and register them in `MainApp` constructor.
+  * Add the relevant `DHT22FeatureController` class and register an instance in the `MainApp` constructor.
     * Notice we have one feature controller to measure both temperature and humidity.
     * Use the controller class `Loop()` method to read the sensor and send out messages to topic `sensor`.
     * Use port `6`.
@@ -137,7 +137,7 @@ Push motion events to web app:
   * Connect the motion sensor:
     * Use GPIO pin `14` to connect sensor `Out` pin.
     * Connect `Vcc` to `+3.3V` voltage.
-  * Add the relevant `MotionFeatureController` class and register them in `MainApp` constructor.
+  * Add the relevant `MotionFeatureController` class and create and instance inside the `MainApp` constructor.
     * Use the controller class `Loop()` method to read the sensor and send out messages to topic `sensor`.
     * Use port `7`.
   * Push the data onlu on state change and not often than every 3 seconds.
