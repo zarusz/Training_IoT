@@ -22,6 +22,8 @@ public:
   virtual void Loop();
   // Attempts to match the command to this feature and handle.
   virtual bool TryHandle(JsonObject& command);
+  // Attempt to handle the incomming message (on the specified topic).
+  virtual bool TryHandle(JsonObject& message, const char* topic);
 
 protected:
   virtual void PopulateDescription(JsonArray& featureDescriptions, const char* type);

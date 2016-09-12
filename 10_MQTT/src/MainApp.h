@@ -9,7 +9,7 @@
 #include "DeviceConfig.h"
 #include "Feature/FeatureController.h"
 #include "Transport/MessageBus.h"
-#include "Transport/HttpMessageBus.h"
+#include "Transport/MqttMessageBus.h"
 
 #include <vector>
 #include <memory>
@@ -19,7 +19,7 @@ class MainApp : public DeviceContext, public MessageHandler
 private:
 	DeviceConfig _deviceConfig;
 	JsonSerializationProvider _serializationProvider;
-	HttpMessageBus _messageBus;
+	MqttMessageBus _messageBus;
 	std::vector<FeatureController*> _features;
 
 public:
@@ -46,6 +46,7 @@ protected:
 
 	void SendDeviceDescription();
 	void OnCommand(JsonObject& command);
+	void OnMessage(JsonObject& command, const char* topic);
 };
 
 

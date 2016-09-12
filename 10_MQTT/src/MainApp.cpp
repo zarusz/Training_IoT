@@ -22,7 +22,8 @@
 #define NETWORK_PASSWORD	"IoT_Password"
 
 // update with the host for the 06_RemoteControl_App ASP.NET Web App
-#define SERVER_HOST				"http://iot-remotecontrol-2.azurewebsites.net/api/device/"
+#define SERVER_HOST				"192.168.1.120"
+#define SERVER_PORT				1883
 
 #define TOPIC_REGISTER		"register"
 #define TOPIC_SENSOR			"sensor"
@@ -30,7 +31,7 @@
 MainApp::MainApp()
 	: _deviceConfig(DEVICE_UNIQUE_ID, NETWORK_NAME, NETWORK_PASSWORD),
 		_serializationProvider(),
-		_messageBus(SERVER_HOST, &_serializationProvider, this)
+		_messageBus(SERVER_HOST, SERVER_PORT, &_serializationProvider, this, _deviceConfig.uniqueId)
 {
 	// sub to topic of the device's unique id
 	_messageBus.Subscribe(_deviceConfig.uniqueId);
@@ -92,9 +93,9 @@ void MainApp::Handle(const char* topic, JsonObject& message)
 {
 	// if topic is same as device id
 	if (strcmp(_deviceConfig.uniqueId, topic) == 0)
-	{
 		OnCommand(message);
-	}
+	else
+		OnMessage(message, topic);
 }
 
 void MainApp::OnStart() {
@@ -123,17 +124,17 @@ void MainApp::OnLoop()
 
 void MainApp::SendDeviceDescription()
 {
-		Serial.println("Sending DeviceDescription...");
+	Serial.println("Sending DeviceDescription...");
 
-		JsonObject& descriptionEvent = _serializationProvider.CreateMessage();
-		descriptionEvent["deviceId"] = _deviceConfig.uniqueId;
-		JsonArray& featureDescriptions = descriptionEvent.createNestedArray("features");
+	JsonObject& descriptionEvent = _serializationProvider.CreateMessage();
+	descriptionEvent["deviceId"] = _deviceConfig.uniqueId;
+	JsonArray& featureDescriptions = descriptionEvent.createNestedArray("features");
 
-		std::for_each(_features.begin(), _features.end(), [&featureDescriptions](FeatureController* feature) {
-			feature->PopulateDescriptions(featureDescriptions);
-		});
+	std::for_each(_features.begin(), _features.end(), [&featureDescriptions](FeatureController* feature) {
+		feature->PopulateDescriptions(featureDescriptions);
+	});
 
-		_messageBus.Publish(TOPIC_REGISTER, descriptionEvent);
+	_messageBus.Publish(TOPIC_REGISTER, descriptionEvent);
 }
 
 void MainApp::OnCommand(JsonObject& command)
@@ -145,4 +146,15 @@ void MainApp::OnCommand(JsonObject& command)
 	});
 
 	Serial.println("[MainApp] OnCommand (finish)");
+}
+
+void MainApp::OnMessage(JsonObject& command, const char* topic)
+{
+	Serial.println("[MainApp] OnMessage (start)");
+
+	std::for_each(_features.begin(), _features.end(), [&command, topic](FeatureController* feature) {
+		feature->TryHandle(command, topic);
+	});
+
+	Serial.println("[MainApp] OnMessage (finish)");
 }

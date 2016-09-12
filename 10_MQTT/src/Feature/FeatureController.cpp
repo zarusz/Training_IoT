@@ -29,6 +29,11 @@ void FeatureController::Loop()
   // nothing to do - override in subclass
 }
 
+bool FeatureController::TryHandle(JsonObject& message, const char* topic)
+{
+  return false;
+}
+
 bool FeatureController::TryHandle(JsonObject& command)
 {
   if (CanHandle(command))
