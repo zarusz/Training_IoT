@@ -44,7 +44,8 @@ protected:
 	void OnStop();
 	void OnLoop();
 
-	void SendDeviceDescription();
+	bool _sentDeviceDescription;
+	bool SendDeviceDescription();
 	void OnCommand(JsonObject& command);
 	void OnMessage(JsonObject& command, const char* topic);
 };

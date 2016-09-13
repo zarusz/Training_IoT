@@ -67,21 +67,21 @@ void DHT22FeatureController::Loop()
 
 void DHT22FeatureController::PublishMeasureEvent(bool isTemp, float value)
 {
-    auto& measureEvent = _context->GetSerializationProvider().CreateMessage();
-    measureEvent["port"] = _port;
-    measureEvent["deviceId"] = _context->GetConfig().uniqueId;
+  auto& measureEvent = _context->GetSerializationProvider().CreateMessage();
+  measureEvent["port"] = _port;
+  measureEvent["deviceId"] = _context->GetConfig().uniqueId;
 
-    if (isTemp)
-    {
-      measureEvent["type"] = FEATURE_TYPE_TEMPERATURE;
-      measureEvent["temperature"] = value;
-    }
-    else
-    {
-      measureEvent["type"] = FEATURE_TYPE_HUMIDITY;
-      measureEvent["humidity"] = value;
-    }
+  if (isTemp)
+  {
+    measureEvent["type"] = FEATURE_TYPE_TEMPERATURE;
+    measureEvent["temperature"] = value;
+  }
+  else
+  {
+    measureEvent["type"] = FEATURE_TYPE_HUMIDITY;
+    measureEvent["humidity"] = value;
+  }
 
-    // publish the event
-    _context->GetMessageBus().Publish(_topic, measureEvent);
+  // publish the event
+  bool succeeded =_context->GetMessageBus().Publish(_topic, measureEvent);
 }

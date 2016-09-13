@@ -30,18 +30,13 @@ namespace TrainingIoT.RemoteControl.App
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
 
 
-            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             config.Formatters.JsonFormatter.UseDataContractJsonSerializer = false;
-            // handle polymorphic models
-            config.Formatters.JsonFormatter.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
-            // serialize enums as string
-            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(
-                new Newtonsoft.Json.Converters.StringEnumConverter {CamelCaseText = true});
             // For debugging ease display JSON when browser requests text/plan or html.
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/plain"));
             config.Formatters.JsonFormatter.SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/html"));
 
-            config.Formatters.JsonFormatter.SerializerSettings.Converters.Add(new JsonInheritanceConverter());
+
+            SetJsonSerializationSettings(config.Formatters.JsonFormatter.SerializerSettings);
 
             // Web API routes
             config.MapHttpAttributeRoutes();
@@ -51,6 +46,16 @@ namespace TrainingIoT.RemoteControl.App
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
                 );
+        }
+
+        public static void SetJsonSerializationSettings(JsonSerializerSettings serializerSettings)
+        {
+            // handle polymorphic models
+            serializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+            // serialize enums as string
+            serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            serializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter { CamelCaseText = true });
+            serializerSettings.Converters.Add(new JsonInheritanceConverter());
         }
     }
 }

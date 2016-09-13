@@ -1,10 +1,14 @@
+using System.Configuration;
 using Autofac;
 using SlimMessageBus;
 using SlimMessageBus.Core.Config;
 using SlimMessageBus.ServiceLocator.Config;
 using TrainingIoT.RemoteControl.App.Comm;
+using TrainingIoT.RemoteControl.App.Comm.Http;
+using TrainingIoT.RemoteControl.App.Comm.Mqtt;
 using TrainingIoT.RemoteControl.App.Domain.Impl;
 using TrainingIoT.RemoteControl.App.ErrorLogging;
+using TrainingIoT.RemoteControl.App.Handlers;
 
 namespace TrainingIoT.RemoteControl.App
 {
@@ -21,9 +25,12 @@ namespace TrainingIoT.RemoteControl.App
             builder.RegisterType<DefaultDeviceFactory>()
                 .AsImplementedInterfaces();
 
-            builder.RegisterType<MemoryFeatureCommandQueueService>()
-                .AsImplementedInterfaces()
-                .SingleInstance();
+
+            builder.RegisterType<DeviceDescriptionEventHandler>()
+                .AsImplementedInterfaces();
+
+            builder.RegisterType<SensorFeatureEventHandler>()
+                .AsImplementedInterfaces();
 
 
             var messageBus = new MessageBusBuilder()
@@ -33,10 +40,29 @@ namespace TrainingIoT.RemoteControl.App
             MessageBus.SetProvider(() => messageBus);
             builder.RegisterInstance(messageBus);
 
-            builder.RegisterType<FeatureChangedEventHandler>()
-                .AsImplementedInterfaces();
+            var mqttTransport = ConfigurationManager.AppSettings["TransportMode"] == "MQTT";
+            if (mqttTransport)
+                TransportMqtt(builder);
+            else
+                TransportHttp(builder);
+        }
 
-            builder.RegisterType<SensorFeatureEventHandler>()
+        private static void TransportMqtt(ContainerBuilder builder)
+        {
+            builder.RegisterType<MqttAdapter>()
+                .AsSelf()
+                .AsImplementedInterfaces()
+                .SingleInstance()
+                .AutoActivate();
+        }
+
+        private static void TransportHttp(ContainerBuilder builder)
+        {
+            builder.RegisterType<MemoryFeatureCommandQueue>()
+                .AsImplementedInterfaces()
+                .SingleInstance();
+
+            builder.RegisterType<HttpAdapter>()
                 .AsImplementedInterfaces();
         }
     }

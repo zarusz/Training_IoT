@@ -101,8 +101,6 @@ void MainApp::Handle(const char* topic, JsonObject& message)
 void MainApp::OnStart() {
 	Serial.println("[MainApp] Starting...");
 
-	SendDeviceDescription();
-
 	Serial.println("[MainApp] Started.");
 }
 
@@ -114,6 +112,10 @@ void MainApp::OnStop() {
 
 void MainApp::OnLoop()
 {
+	if (!_sentDeviceDescription && SendDeviceDescription()) {
+		_sentDeviceDescription = true;
+	}
+
 	// run loop on each feature instance (the new C++11 lambda syntax)
 	std::for_each(_features.begin(), _features.end(), [](FeatureController* feature) {
 		feature->Loop();
@@ -122,9 +124,9 @@ void MainApp::OnLoop()
 	//	(*featureIt)->Loop();
 }
 
-void MainApp::SendDeviceDescription()
+bool MainApp::SendDeviceDescription()
 {
-	Serial.println("Sending DeviceDescription...");
+	Serial.println("[MainApp] Sending DeviceDescription...");
 
 	JsonObject& descriptionEvent = _serializationProvider.CreateMessage();
 	descriptionEvent["deviceId"] = _deviceConfig.uniqueId;
@@ -134,7 +136,7 @@ void MainApp::SendDeviceDescription()
 		feature->PopulateDescriptions(featureDescriptions);
 	});
 
-	_messageBus.Publish(TOPIC_REGISTER, descriptionEvent);
+	return _messageBus.Publish(TOPIC_REGISTER, descriptionEvent);
 }
 
 void MainApp::OnCommand(JsonObject& command)

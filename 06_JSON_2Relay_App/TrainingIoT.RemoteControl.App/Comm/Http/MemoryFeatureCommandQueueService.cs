@@ -1,12 +1,11 @@
 using System.Collections.Concurrent;
 using TrainingIoT.RemoteControl.App.Messages;
 
-namespace TrainingIoT.RemoteControl.App.Comm
+namespace TrainingIoT.RemoteControl.App.Comm.Http
 {
-    public class MemoryFeatureCommandQueueService : IFeatureCommandQueueService
+    public class MemoryFeatureCommandQueue : IFeatureCommandQueue
     {
-        private readonly ConcurrentDictionary<string, ConcurrentQueue<FeatureCommand>> _commandsByDevice =
-            new ConcurrentDictionary<string, ConcurrentQueue<FeatureCommand>>();
+        private readonly ConcurrentDictionary<string, ConcurrentQueue<FeatureCommand>> _commandsByDevice = new ConcurrentDictionary<string, ConcurrentQueue<FeatureCommand>>();
 
         #region Implementation of IFeatureCommandQueueService
 

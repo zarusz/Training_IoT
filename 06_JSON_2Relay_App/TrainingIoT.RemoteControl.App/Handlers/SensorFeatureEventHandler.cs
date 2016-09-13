@@ -3,7 +3,7 @@ using SlimMessageBus;
 using TrainingIoT.RemoteControl.App.Domain;
 using TrainingIoT.RemoteControl.App.Messages;
 
-namespace TrainingIoT.RemoteControl.App.Comm
+namespace TrainingIoT.RemoteControl.App.Handlers
 {
     public class SensorFeatureEventHandler : IHandles<SensorFeatureEvent>
     {

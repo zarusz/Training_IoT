@@ -88,6 +88,10 @@
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="M2Mqtt.Net, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\M2Mqtt.4.3.0.0\lib\net45\M2Mqtt.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -232,14 +236,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="Comm\Mqtt\IBackgroundService.cs" />
+    <Compile Include="Comm\Mqtt\MqttAdapter.cs" />
+    <Compile Include="Handlers\DeviceDescriptionEventHandler.cs" />
     <Compile Include="Domain\MotionSensorFeature.cs" />
     <Compile Include="ErrorLogging\LoggingHandleErrorAttribute.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\Startup.WebApi.cs" />
     <Compile Include="App_Start\Startup.Mvc.cs" />
     <Compile Include="App_Start\Startup.Services.cs" />
-    <Compile Include="Comm\FeatureChangedEventHandler.cs" />
-    <Compile Include="Comm\SensorFeatureEventHandler.cs" />
+    <Compile Include="Comm\Http\HttpAdapter.cs" />
+    <Compile Include="Handlers\SensorFeatureEventHandler.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Domain\DeviceFeature.cs" />
     <Compile Include="Domain\Events\FeatureChangedEvent.cs" />
@@ -249,8 +256,8 @@
     <Compile Include="Domain\LedFeature.cs" />
     <Compile Include="Domain\SwitchFeature.cs" />
     <Compile Include="Domain\FeatureType.cs" />
-    <Compile Include="Comm\IFeatureCommandQueueService.cs" />
-    <Compile Include="Comm\MemoryFeatureCommandQueueService.cs" />
+    <Compile Include="Comm\Http\IFeatureCommandQueueService.cs" />
+    <Compile Include="Comm\Http\MemoryFeatureCommandQueueService.cs" />
     <Compile Include="Domain\TemperatureSensorFeature.cs" />
     <Compile Include="Messages\DeviceDescriptionEvent.cs" />
     <Compile Include="Messages\HumiditySensorFeatureEvent.cs" />

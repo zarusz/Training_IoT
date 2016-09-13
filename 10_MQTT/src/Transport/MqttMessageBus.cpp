@@ -33,7 +33,7 @@ bool MqttMessageBus::Publish(const char* topic, JsonObject& message)
 {
   String payload = _serializationProvider->Serialize(message);
   Serial.printf("[MQTT] Publish to topic: '%s', message: '%s'\n", topic, payload.c_str());
-  _mqttClient.publish(topic, payload.c_str());
+  return _mqttClient.publish(topic, payload.c_str());
 }
 
 void MqttMessageBus::Subscribe(const char* topic)

@@ -1,3 +1,6 @@
+using SlimMessageBus;
+using TrainingIoT.RemoteControl.App.Messages;
+
 namespace TrainingIoT.RemoteControl.App.Domain
 {
     public class SwitchFeature : DeviceFeature
@@ -21,5 +24,22 @@ namespace TrainingIoT.RemoteControl.App.Domain
             IsOn = true;
             NotifyChange();
         }
+
+        #region Overrides of DeviceFeature
+
+        protected override void NotifyChange()
+        {
+            base.NotifyChange();
+
+            MessageBus.Current.Publish(new SwitchFeatureCommand
+            {
+                DeviceId = Device.DeviceId,
+                Type = Type,
+                Port = Port,
+                On = IsOn
+            });
+        }
+
+        #endregion
     }
 }
