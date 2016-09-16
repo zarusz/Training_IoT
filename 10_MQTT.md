@@ -1,11 +1,23 @@
 ### 09. MQTT Broker (`09_MQTT`)
-This sample moves our existing solution on the MQTT protocol.
-This will make the IoT solution more robust.   
+This step ports the previous version to the MQTT protocol (instead of the long-polling HTTP).
+MQTT approach is more robust.
+
+Some details about [MQTT](http://mqtt.org):
+* Message Queuing Telemetry Transport (MQTT)
+* Machine-to-machine (M2M) / "Internet of Things" connectivity protocol
+* Extremely lightweight publish/subscribe messaging transport
+* Built on TCP/IP
+* OASIS Standard
+
+### MQTT Broker
+
+[Mosquitto](https://mosquitto.org/) is used as the MQTT broker. It is super easy to use and is lightweight.
+
+### Device
+
+[PubSubClient](http://platformio.org/lib/show/89/PubSubClient) - C++ client library is used to connect with MQTT from the ESP device. See [API Documentation](http://pubsubclient.knolleary.net/api.html).
 
 ToDo
-
-Library [PubSubClient](http://platformio.org/lib/show/89/PubSubClient).
-[API Documentation](http://pubsubclient.knolleary.net/api.html).
 
 ```
 PS E:\dev\work\training_iot\10_MQTT> platformio lib install "PubSubClient"
@@ -66,7 +78,43 @@ pi@raspberrypi ~ $ mosquitto_sub -t register -t sensor
 {"port":6,"deviceId":"my_device_id","type":"temperatureSensor","temperature":25.00}
 ```
 
+Using Mosquitto's CLI clients we can subscribe to selected topics to view the messages passed around:
+```
+$ mosquitto_sub -t register -t sensor -t my_device_id
+```
+
+Alternative we could also use [MyMQTT](https://play.google.com/store/apps/details?id=at.tripwire.mqtt.client) (an android app) to view the traffic.
+
 ### Control Web App
 
-NuGet: [M2Mqtt](https://www.nuget.org/packages/M2Mqtt/)
-[Reference how](https://m2mqtt.wordpress.com/using-mqttclient/) to use it.
+[M2Mqtt](https://www.nuget.org/packages/M2Mqtt/) is a .NET client library which is used in the control web app. See [API Documentation](https://m2mqtt.wordpress.com/using-mqttclient/).
+
+We use the version from `06_JSON_2Relay_App`.
+When run locally it will use the MQTT transport - see the `Web.config`:
+
+```xml
+<appSettings>
+  <add key="MqttBrokerHost" value="192.168.1.120"/>
+  <add key="MqttBrokerPort" value="1883"/>
+  <!-- MQTT or HTTP -->
+  <add key="TransportMode" value="MQTT"/>
+</appSettings>
+```
+
+
+### Exercise
+
+1. Add retain message `my_device_id/status` (on device start)
+  ```json
+  {
+    "online": true
+  }
+  ```
+
+2. Add LWT message on `my_device_id/status`
+
+  ```json
+  {
+    "online": false
+  }
+  ```

@@ -3,7 +3,6 @@ using Autofac;
 using SlimMessageBus;
 using SlimMessageBus.Core.Config;
 using SlimMessageBus.ServiceLocator.Config;
-using TrainingIoT.RemoteControl.App.Comm;
 using TrainingIoT.RemoteControl.App.Comm.Http;
 using TrainingIoT.RemoteControl.App.Comm.Mqtt;
 using TrainingIoT.RemoteControl.App.Domain.Impl;
