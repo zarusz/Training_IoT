@@ -23,11 +23,14 @@ Lastly the `MainApp` constructor instantiates and configures ports/pins of the n
 When the device starts it publishes the device description:
 ```
 [MainApp] Sending DeviceDescription...
-[MQTT] Publish to topic: 'register', message: '{"deviceId":"my_device_id","features":[{"port":8,"type":"ir_in"},{"port":9,"type":"ir_in"},{"port":10,"type":"ir_in"}]}'
+[MQTT] Publish to topic: 'register', message: '{"deviceId":"my_device_id","features":[{"port":4,"type":"switch"},{"port":5,"type":"switch"},{"port":1,"type":"led"},
+{"port":6,"type":"temperatureSensor"},{"port":6,"type":"humiditySensor"},{"port":7,"type":"motionSensor"},{"port":8,"type":"ir_in"},{"port":9,"type":"ir_out"}]}'
 ```
 
 When POWER button is pressed on the LED remote, our device outputs:
 ```
 [IR-in] Encoding  : NEC
-[IR-in] Code      : FF02FD (32 bits)
+[IR-in] Code      : FF18E7 (32 bits)
+[IR-in] Encoding  : NEC
+[IR-in] Code      : FFFFFFFF (0 bits)
 ```

@@ -39,7 +39,6 @@ void IRInFeatureController::DumpInfo(decode_results* results)
   Serial.print(" (");
   Serial.print(results->bits, DEC);
   Serial.println(" bits)");
-  Serial.println(""); // New line between entries
 }
 
 void IRInFeatureController::Loop()

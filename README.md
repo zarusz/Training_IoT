@@ -93,10 +93,10 @@ More details are provided on the [ESP Arduino wiki](https://github.com/esp8266/A
 * [07_JSON_2Relay_Exercise](07_JSON_2Relay_Exercise.md)
 * [08_Temp_Motion](08_Temp_Motion.md)
 * [09_Temp_Motion_Exercise](09_Temp_Motion_Exercise.md)
-* ToDo:
-	* [10_MQTT](10_MQTT.md)
-	* [11_IR](11_IR.md)
-
+* [10_MQTT](10_MQTT.md)
+* [11_MQTT_Exercse](11_MQTT_Exercse.md)
+* [12_IR](12_IR.md)
+* [13_IR_Exercise](13_IR_Exercise.md)
 
 ### TODO Next example
 

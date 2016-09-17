@@ -1,6 +1,9 @@
 ### 09. MQTT Broker (`09_MQTT`)
-This step ports the previous version to the MQTT protocol (instead of the long-polling HTTP).
-MQTT approach is more robust.
+This step ports the previous version to the MQTT protocol to MQTTP is more robust than long-polling over HTTP.
+
+#### MQTT
+
+MQTT has been designed with the IoT systems in mind. It is lightweight that even the low memory systems can easily use it.
 
 Some details about [MQTT](http://mqtt.org):
 * Message Queuing Telemetry Transport (MQTT)
@@ -9,16 +12,31 @@ Some details about [MQTT](http://mqtt.org):
 * Built on TCP/IP
 * OASIS Standard
 
-### MQTT Broker
+[Pub/sub messaging](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) is a messaging pattern that allows the system to scale out.
+![](assets/MQTT - Pub Sub.png)
 
-[Mosquitto](https://mosquitto.org/) is used as the MQTT broker. It is super easy to use and is lightweight.
+#### Worth reading (at home)
+
+There is a good set of articles about [MQTT Essetnials](http://www.hivemq.com/blog/mqtt-essentials/) from [HiveMQ](http://www.hivemq.com/).
+
+#### MQTT Broker (Mosquitto)
+
+We will use [Mosquitto](https://mosquitto.org/) as the MQTT broker. It is super easy to use, lightweight and open-source. You can even run it on your Raspberry Pi.
+
+Mosquitto (and other brokers) supports bridging. This means many broker instances can be connected. That allows seamless connections of local IoT networks into larger networks.
+
+![](assets/MQTT - Bridging.png)
+
+The bridge can be secured in many ways:
+* TLS
+* Authentication
+* ACL policies in place.
 
 ### Device
 
 [PubSubClient](http://platformio.org/lib/show/89/PubSubClient) - C++ client library is used to connect with MQTT from the ESP device. See [API Documentation](http://pubsubclient.knolleary.net/api.html).
 
-ToDo
-
+Installing the PubSubClient in PlatformIO:
 ```
 PS E:\dev\work\training_iot\10_MQTT> platformio lib install "PubSubClient"
 Library Storage: E:\dev\work\training_iot\10_MQTT\.piolibdeps
@@ -30,10 +48,10 @@ Unpacking...
 PubSubClient @ 2.6 has been successfully installed!
 ```
 
-Example for ESP8266:
+The sample was implemented from:
 https://github.com/knolleary/pubsubclient/blob/master/examples/mqtt_esp8266/mqtt_esp8266.ino
 
-These are the files we've added and modified:
+Files that have been added and modified:
 ```
 src/Feature/FeatureController.cpp
 src/Feature/FeatureController.h
@@ -101,9 +119,9 @@ When run locally it will use the MQTT transport - see the `Web.config`:
 </appSettings>
 ```
 
-
 ### Exercise
 
+We want to reflect the connectivity state of our device (if it's online/offline) and make this available to other devices:
 1. Add retain message `my_device_id/status` (on device start)
   ```json
   {

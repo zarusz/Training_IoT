@@ -46,11 +46,11 @@ MainApp::MainApp()
 	//_features.push_back(new LedFeatureController(2, this, 12));
 	//_features.push_back(new LedFeatureController(3, this, 14));
 
-	//_features.push_back(new DHT22FeatureController(6, this, 12, TOPIC_SENSOR));
-	//_features.push_back(new MotionSensorFeatureController(7, this, 14, TOPIC_SENSOR));
+	_features.push_back(new DHT22FeatureController(6, this, 12, TOPIC_SENSOR));
+	_features.push_back(new MotionSensorFeatureController(7, this, 14, TOPIC_SENSOR));
 
 	_features.push_back(new IRInFeatureController(8, this, 2));
-	_features.push_back(new IROutFeatureController(9, this, 0));
+	_features.push_back(new IROutFeatureController(9, this, 15));
 }
 
 MainApp::~MainApp()
