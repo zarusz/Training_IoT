@@ -1,9 +1,9 @@
 ### 09. MQTT Broker (`09_MQTT`)
-This step ports the previous version to the MQTT protocol to MQTTP is more robust than long-polling over HTTP.
+This step ports the previous version to the MQTT protocol which is more robust than long-polling over HTTP.
 
 #### MQTT
 
-MQTT has been designed with the IoT systems in mind. It is lightweight that even the low memory systems can easily use it.
+MQTT has been designed with the IoT systems in mind. It is lightweight, so that low memory systems can easily use it.
 
 Some details about [MQTT](http://mqtt.org):
 * Message Queuing Telemetry Transport (MQTT)
@@ -17,7 +17,7 @@ Some details about [MQTT](http://mqtt.org):
 
 #### Worth reading (at home)
 
-There is a good set of articles about [MQTT Essetnials](http://www.hivemq.com/blog/mqtt-essentials/) from [HiveMQ](http://www.hivemq.com/).
+There is a good set of articles about [MQTT Essentials](http://www.hivemq.com/blog/mqtt-essentials/) from [HiveMQ](http://www.hivemq.com/).
 
 #### MQTT Broker (Mosquitto)
 
@@ -96,7 +96,7 @@ pi@raspberrypi ~ $ mosquitto_sub -t register -t sensor
 {"port":6,"deviceId":"my_device_id","type":"temperatureSensor","temperature":25.00}
 ```
 
-Using Mosquitto's CLI clients we can subscribe to selected topics to view the messages passed around:
+Using Mosquitto's CLI client we can subscribe to selected topics to view the messages passed around (see [mosquitto_sub](https://mosquitto.org/man/mosquitto_sub-1.html)):
 ```
 $ mosquitto_sub -t register -t sensor -t my_device_id
 ```
@@ -122,6 +122,7 @@ When run locally it will use the MQTT transport - see the `Web.config`:
 ### Exercise
 
 We want to reflect the connectivity state of our device (if it's online/offline) and make this available to other devices:
+
 1. Add retain message `my_device_id/status` (on device start)
   ```json
   {

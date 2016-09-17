@@ -25,7 +25,7 @@ Ensure you have installed:
 	* Ensure you install *clang* to have code completion.
 * [Visual Studio 2015 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) IDE for the control app
 
-#### Hardware
+#### Hardware Checklist
 
 The training requires parts:
 * Chip
@@ -33,21 +33,22 @@ The training requires parts:
 	* Adapter board ESP8266 ESP-12 / 12E / 12F / 07
 * USB-UART (flasher)
 	* Converter USB-UART PL2303 - microUSB slot
-	* MicroUSB cable B - A - Esperanza - 0,8m
+	* MicroUSB cable B-A
 * Sensors
 	* Motion detector PIR HC-SR501
-	* Transmitter IR LIRED5C-850 5mm 850nm
-	* Infrared Receiver TSOP4838 - 38 kHz
+	* Transmitter IR 5mm 940nm (TSAL6400)
+	* Infrared Receiver 38 kHz (TSOP4838)
 	* Humidity detector DHT22 AM2302
-	* Module with 2 relays (photooptic isolation)
+	* Module with 2 relays (photo-optic isolation)
 * Power
-	* Stabilizer LDO 3,3V LF33CV - THT TO220
-	* Power adapter 5V / 1,2A - DC 5,5/2,5mm
+	* Stabilizer LDO 3.3V LF33CV - THT TO220
+	* Power adapter 5V/2A DC
 * Other stuff
 	* Breadboard
 	* Male wires
 	* 3x LEDs (red, yellow, green)
-	* 3x 220&#937; resistor
+	* 4x 220&#937; resistor
+	* 1x 100&#937; resistor
 * Computer (PC, MAC?)
 
 ## Notes
@@ -94,43 +95,10 @@ More details are provided on the [ESP Arduino wiki](https://github.com/esp8266/A
 * [08_Temp_Motion](08_Temp_Motion.md)
 * [09_Temp_Motion_Exercise](09_Temp_Motion_Exercise.md)
 * [10_MQTT](10_MQTT.md)
-* [11_MQTT_Exercse](11_MQTT_Exercse.md)
+* [11_MQTT_Exercise](11_MQTT_Exercise.md)
 * [12_IR](12_IR.md)
 * [13_IR_Exercise](13_IR_Exercise.md)
 
-### TODO Next example
-
-TODO
-
 ## Extras
 
-### Exceptions
-
-Sometime the program causes runtime errors that cause the chip to reboot and enter invalid state. ESP provides some diagnostic information when an error happens:
-
-```
-Exception (28):
-epc1=0x40221a46 epc2=0x00000000 epc3=0x00000000 excvaddr=0x00000000 depc=0x00000000
-
-ctx: sys
-sp: 3ffff850 end: 3fffffb0 offset: 01a0
-
->>>stack>>>
-3ffff9f0:  00000001 00000004 3ffe99b4 00000002
-...
-3fffffa0:  400201e9 efac3ebe ffffff01 55aa55aa
-<<<stack<<<
-```
-
-See the list of exceptions [Exception Causes (EXCCAUSE)](https://github.com/esp8266/Arduino/blob/master/doc/exception_causes.md)
-
-### Upgrading ESP to newer Espressif SDK
-
-To upgrade your ESP8266 with the latest firmware, you need:
-
-1. The [Flash Download Tool](http://www.espressif.com/en/support/download/other-tools)
-2. The [official SDK](http://espressif.com/en/support/download/sdks-demos) from Espressif.
-
-Typically you will need the *NONOS* SDK. For example `ESP8266 NONOS SDK V1.5.4`.
-
-There is a really [great article](http://www.allaboutcircuits.com/projects/update-the-firmware-in-your-esp8266-wi-fi-module/) on the upgrade procedure.
+[Additional information](20_Extras.md)

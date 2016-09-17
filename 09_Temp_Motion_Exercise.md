@@ -4,7 +4,7 @@ The connections for our ESP on breadboard:
 
 ESP GPIO | Port | What
 ---|---|---------------
-13 | 1 | LED (with resistor)
+13 | 1 | LED (leg with resistor)
 12 | 6 | Temperature sensor `Data` pin
 14 | 7 | Motion sensor `Out` pin
  4 | 4 | `IN1` from 2-Relay Module

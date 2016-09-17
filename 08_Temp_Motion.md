@@ -13,9 +13,9 @@ We are using the connections from previous exercise:
 
 ESP GPIO | Port | What
 ---|---|---------------
-13 | 1 | LED (with resistor)
-12 | 2 | LED (with resistor)
-14 | 3 | LED (with resistor)
+13 | 1 | LED (leg with resistor)
+12 | 2 | LED (leg with resistor)
+14 | 3 | LED (leg with resistor)
  4 | 4 | `IN1` from 2-Relay Module
  5 | 5 | `IN2` from 2-Relay Module
 
