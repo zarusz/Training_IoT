@@ -24,7 +24,7 @@
 #define NETWORK_PASSWORD	"IoT_Password"
 
 // update with the host for the 06_RemoteControl_App ASP.NET Web App
-#define SERVER_HOST				"192.168.1.120"
+#define SERVER_HOST				"192.168.2.120"
 #define SERVER_PORT				1883
 
 #define TOPIC_REGISTER		"register"

@@ -112,7 +112,7 @@ When run locally it will use the MQTT transport - see the `Web.config`:
 
 ```xml
 <appSettings>
-  <add key="MqttBrokerHost" value="192.168.1.120"/>
+  <add key="MqttBrokerHost" value="192.168.2.120"/>
   <add key="MqttBrokerPort" value="1883"/>
   <!-- MQTT or HTTP -->
   <add key="TransportMode" value="MQTT"/>
