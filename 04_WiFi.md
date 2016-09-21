@@ -22,10 +22,9 @@ Here is the program:
 const char* ssid     = "IoT_Network";
 const char* password = "IoT_Password";
 
-void connectWiFi() {
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+void connectWiFi()
+{
+  Serial.printf("\nConnecting to %s\n", ssid);
 
   // Connect to a WiFi network
   WiFi.begin(ssid, password);
@@ -36,8 +35,7 @@ void connectWiFi() {
     Serial.print(".");
   }
 
-  Serial.println("");
-  Serial.println("WiFi connected");
+  Serial.println("\nWiFi connected");
 }
 
 void printWiFiDetails()

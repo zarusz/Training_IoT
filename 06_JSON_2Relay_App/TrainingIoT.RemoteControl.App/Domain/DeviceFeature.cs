@@ -17,7 +17,7 @@ namespace TrainingIoT.RemoteControl.App.Domain
             Port = port;
         }
 
-        protected void NotifyChange()
+        protected virtual void NotifyChange()
         {
             MessageBus.Current.Publish(new FeatureChangedEvent(this));
         }

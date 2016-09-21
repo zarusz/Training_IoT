@@ -49,7 +49,6 @@ The web app also has a simple [user interface](http://iot-remotecontrolapp.azure
 
 ![](assets/05_control_webapp.png "Control user interface for my_device_id")
 
-
 The web app is not that interesting, so let's move on to the client device (ESP).
 
 #### Client device (`05_RemoteControl`)
@@ -63,7 +62,7 @@ bool tryGetDeviceState(String& payload)
 {
   bool success = false;
   String url = String("http://") + server_host + "/api/device/" + device_id + "/state";
-  Serial.print("Connecting to ");
+  Serial.print("[HTTP] Connecting to ");
   Serial.println(url);
 
   HTTPClient http;
@@ -91,7 +90,7 @@ bool tryGetDeviceState(String& payload)
 
   http.end();
 
-  Serial.println("Closing connection");
+  Serial.println("[HTTP] Closing connection");
   Serial.println();
   return success;
 }
@@ -120,17 +119,17 @@ void loop()
 
 Any change done in the web app will eventually be reflected in the device's LED:
 ```
-Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
+[HTTP] Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
 [HTTP] GET... code: 200
-Response:
+[HTTP] Response:
 0
-Closing connection
+[HTTP] Closing connection
 
-Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
+[HTTP] Connecting to http://iot-remotecontrolapp.azurewebsites.net/api/device/my_device_id/state
 [HTTP] GET... code: 200
-Response:
+[HTTP] Response:
 1
-Closing connection
+[HTTP] Closing connection
 ```
 
 #### Reference

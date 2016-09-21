@@ -7,8 +7,8 @@ namespace TrainingIoT.RemoteControl.App.Domain
         public float Humidity { get; set; }
         public DateTime Updated { get; set; }
 
-        public HumiditySensorFeature(Device device, FeatureType type, int port) 
-            : base(device, type, port)
+        public HumiditySensorFeature(Device device, int port) 
+            : base(device, FeatureType.HumiditySensor, port)
         {
         }
 

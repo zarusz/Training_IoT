@@ -123,8 +123,8 @@ bool postJson(const String& path, const String& postPayload)
   bool success = false;
   String url = String("http://") + server_host + path;
 
-  Serial.printf("Connecting to %s\n", url.c_str());
-  Serial.printf("Payload: %s\n", postPayload.c_str());
+  Serial.printf("[HTTP] Connecting to %s\n", url.c_str());
+  Serial.printf("[HTTP] Payload: %s\n", postPayload.c_str());
 
   HTTPClient http;
   http.begin(url);
@@ -182,7 +182,7 @@ bool getJson(const String& path, String& payload)
 {
   bool success = false;
   String url = String("http://") + server_host + path;
-  Serial.printf("Connecting to %s\n", url.c_str());
+  Serial.printf("[HTTP] Connecting to %s\n", url.c_str());
 
   HTTPClient http;
   http.begin(url);
@@ -198,7 +198,7 @@ bool getJson(const String& path, String& payload)
     {
       success = true;
       payload = http.getString();
-      Serial.printf("Response: %s\n", payload.length() > 0 ? payload.c_str() : "(empty)");
+      Serial.printf("[HTTP] Response: %s\n", payload.length() > 0 ? payload.c_str() : "(empty)");
     }
   }
   else
@@ -274,15 +274,15 @@ Connecting to IoT_Network
 ..
 WiFi connected
 IP: 192.168.2.148
-Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/register
-Payload: {"deviceId":"my_device_id","features":[{"type":"led","port":1}]}
+[HTTP] Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/register
+[HTTP] Payload: {"deviceId":"my_device_id","features":[{"type":"led","port":1}]}
 [HTTP] POST... response code: 200, description:
-Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_id
+[HTTP] Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_id
 [HTTP] GET... code: 200
-Response: (empty)
-Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_id
+[HTTP] Response: (empty)
+[HTTP] Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/my_device_id
 [HTTP] GET... code: 200
-Response: (empty)
+[HTTP] Response: (empty)
 ```
 
 Once the device sends its description to (registers itself with) the web app, we will see `my_device_id` device under the [Devices](http://iot-remotecontrol-2.azurewebsites.net/RemoteControl) menu. From there navigate to the control screen of the device to see the available options.
@@ -310,6 +310,8 @@ The other part of the relay module has 3 screws we can attach the other high vol
 ![](assets/2relay_module.jpg)
 
 The module consists of 2 relays which are [opto-isolated](https://en.wikipedia.org/wiki/Opto-isolator). This provides electric protection for our ESP device. The module also has two small blue LEDs that become lit when a relay is on.   
+
+Link to the [online store](http://elty.pl/pl/p/Modul-z-2-przekaznikami-z-transoptorami-/668).
 
 ##### Quick Exercise
 Go ahead and connect the relay switch to +5V and GND. Connect the IN1/IN2 to GND to see that the respective relay becomes closed (and the status LED turns on).

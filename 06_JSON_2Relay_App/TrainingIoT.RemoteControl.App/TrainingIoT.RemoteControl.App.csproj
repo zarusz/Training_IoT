@@ -84,6 +84,14 @@
       <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="M2Mqtt.Net, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\M2Mqtt.4.3.0.0\lib\net45\M2Mqtt.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -91,10 +99,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.3.7\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SlimMessageBus, Version=0.8.1.28358, Culture=neutral, processorArchitecture=MSIL">
@@ -232,12 +236,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="Comm\Mqtt\IBackgroundService.cs" />
+    <Compile Include="Comm\Mqtt\MqttAdapter.cs" />
+    <Compile Include="Domain\IrInFeature.cs" />
+    <Compile Include="Domain\IrOutFeature.cs" />
+    <Compile Include="Handlers\DeviceDescriptionEventHandler.cs" />
+    <Compile Include="Domain\MotionSensorFeature.cs" />
+    <Compile Include="ErrorLogging\LoggingHandleErrorAttribute.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\Startup.WebApi.cs" />
     <Compile Include="App_Start\Startup.Mvc.cs" />
     <Compile Include="App_Start\Startup.Services.cs" />
-    <Compile Include="Comm\FeatureChangedEventHandler.cs" />
-    <Compile Include="Comm\SensorFeatureEventHandler.cs" />
+    <Compile Include="Comm\Http\HttpAdapter.cs" />
+    <Compile Include="Handlers\SensorFeatureEventHandler.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Domain\DeviceFeature.cs" />
     <Compile Include="Domain\Events\FeatureChangedEvent.cs" />
@@ -247,15 +258,17 @@
     <Compile Include="Domain\LedFeature.cs" />
     <Compile Include="Domain\SwitchFeature.cs" />
     <Compile Include="Domain\FeatureType.cs" />
-    <Compile Include="Comm\IFeatureCommandQueueService.cs" />
-    <Compile Include="Comm\MemoryFeatureCommandQueueService.cs" />
+    <Compile Include="Comm\Http\IFeatureCommandQueueService.cs" />
+    <Compile Include="Comm\Http\MemoryFeatureCommandQueueService.cs" />
     <Compile Include="Domain\TemperatureSensorFeature.cs" />
     <Compile Include="Messages\DeviceDescriptionEvent.cs" />
     <Compile Include="Messages\HumiditySensorFeatureEvent.cs" />
-    <Compile Include="Messages\JsonConverters\SensorFeatureEventConverter.cs" />
+    <Compile Include="Messages\IrOutFeatureCommand.cs" />
+    <Compile Include="Messages\MotionSensorFeatureEvent.cs" />
     <Compile Include="Messages\SensorFeatureEvent.cs" />
     <Compile Include="Messages\SwitchFeatureCommand.cs" />
     <Compile Include="Messages\TemperatureSensorFeatureEvent.cs" />
+    <Compile Include="ErrorLogging\ErrorLoggingMiddleware.cs" />
     <Compile Include="Models\DeviceDetailModel.cs" />
     <Compile Include="Models\DeviceInfoModel.cs" />
     <Compile Include="Controllers\RemoteControlController.cs" />
@@ -275,7 +288,9 @@
     <Compile Include="Models\FeatureModel.cs" />
     <Compile Include="Models\HumiditySensorFeatureModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\IrOutFeatureModel.cs" />
     <Compile Include="Models\LedFeatureModel.cs" />
+    <Compile Include="Models\MotionSensorFeatureModel.cs" />
     <Compile Include="Models\SwitchFeatureModel.cs" />
     <Compile Include="Models\TemperatureSensorFeatureModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -324,7 +339,9 @@
     <Content Include="Views\RemoteControl\SwitchFeature.cshtml" />
     <Content Include="Views\RemoteControl\LedFeature.cshtml" />
     <Content Include="Views\RemoteControl\TemperatureSensorFeature.cshtml" />
-    <None Include="Views\RemoteControl\HumiditySensorFeature.cshtml" />
+    <Content Include="Views\RemoteControl\HumiditySensorFeature.cshtml" />
+    <Content Include="Views\RemoteControl\MotionSensorFeature.cshtml" />
+    <None Include="Views\RemoteControl\IrOutFeature.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -337,6 +354,12 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TrainingIoT.RemoteControl.Extension.Json\TrainingIoT.RemoteControl.Extension.Json.csproj">
+      <Project>{392ec27d-3d72-4716-8c95-fceebc5bf576}</Project>
+      <Name>TrainingIoT.RemoteControl.Extension.Json</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -7,8 +7,8 @@ namespace TrainingIoT.RemoteControl.App.Domain
         public float Temperature { get; set; }
         public DateTime Updated { get; set; }
 
-        public TemperatureSensorFeature(Device device, FeatureType type, int port) 
-            : base(device, type, port)
+        public TemperatureSensorFeature(Device device, int port) 
+            : base(device, FeatureType.TemperatureSensor, port)
         {
         }
 

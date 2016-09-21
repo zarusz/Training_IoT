@@ -14,6 +14,7 @@ namespace TrainingIoT.RemoteControl.App.Domain
             Features = new List<DeviceFeature>();
         }
 
-        public DeviceFeature GetFeatureByPort(int port) => Features.SingleOrDefault(x => x.Port == port);
+        public IEnumerable<DeviceFeature> GetFeaturesByPort(int port) => Features.Where(x => x.Port == port);
+        public T GetFeatureByPort<T>(int port) where T : DeviceFeature => GetFeaturesByPort(port).OfType<T>().SingleOrDefault();
     }
 }

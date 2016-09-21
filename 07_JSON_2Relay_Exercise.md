@@ -125,7 +125,7 @@ Connecting to IoT_Network
 ..
 WiFi connected
 IP: 192.168.2.148
-Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/register
-Payload: {"deviceId":"my_device_id","features":[{"type":"led","port":1},{"type":"led","port":2},{"type":"led","port":3},{"type":"switch","port":4},{"type":"switch","port":5}]}
+[HTTP] Connecting to http://iot-remotecontrol-2.azurewebsites.net/api/device/register
+[HTTP] Payload: {"deviceId":"my_device_id","features":[{"type":"led","port":1},{"type":"led","port":2},{"type":"led","port":3},{"type":"switch","port":4},{"type":"switch","port":5}]}
 [HTTP] POST... response code: 200, description:
 ```
