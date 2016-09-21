@@ -25,6 +25,7 @@ private:
 	void ReconnectMqtt();
 	static void MqttMessageCallback(char* topic, byte* payload, unsigned int length);
 	void MessageCallback(char* topic, byte* payload, unsigned int length);
+	bool PublishInternal(const char* topic, const char* payload, bool retain);
 
 public:
 	MqttMessageBus(const char* serverHost, int serverPort, JsonSerializationProvider* serializationProvider, MessageHandler* handler, const char* deviceId);

@@ -32,8 +32,13 @@ MqttMessageBus::~MqttMessageBus()
 bool MqttMessageBus::Publish(const char* topic, JsonObject& message)
 {
   String payload = _serializationProvider->Serialize(message);
-  Serial.printf("[MQTT] Publish to topic: '%s', message: '%s'\n", topic, payload.c_str());
-  return _mqttClient.publish(topic, payload.c_str());
+  return PublishInternal(topic, payload.c_str(), false);
+}
+
+bool MqttMessageBus::PublishInternal(const char* topic, const char* payload, bool retain)
+{
+  Serial.printf("[MQTT] Publish to topic: '%s', message: '%s'\n", topic, payload);
+  return _mqttClient.publish(topic, payload, retain);
 }
 
 void MqttMessageBus::Subscribe(const char* topic)
@@ -66,6 +71,9 @@ void MqttMessageBus::Unsubscribe(const char* topic)
   }
 }
 
+#define OFFLINE_MESSAGE "{ \"online\": false }"
+#define ONLINE_MESSAGE "{ \"online\": true }"
+
 void MqttMessageBus::ReconnectMqtt()
 {
   // Loop until we're reconnected
@@ -76,7 +84,9 @@ void MqttMessageBus::ReconnectMqtt()
      Serial.printf("[MQTT] Attempting MQTT connection (ClientId: %s)...\n", clientId.c_str());
 
      // Attempt to connect
-     if (_mqttClient.connect(clientId.c_str()))
+     String statusTopic = String(_deviceId) + "/status";
+     // boolean connect(const char* id, const char* willTopic, uint8_t willQos, boolean willRetain, const char* willMessage);
+     if (_mqttClient.connect(clientId.c_str(), statusTopic.c_str(), MQTTQOS0, true, OFFLINE_MESSAGE))
      {
        Serial.println("[MQTT] Connected");
 
@@ -85,6 +95,9 @@ void MqttMessageBus::ReconnectMqtt()
          Serial.printf("[MQTT] Subscribing to topic: '%s'\n", topic);
          _mqttClient.subscribe(topic);
        });
+
+       // boolean publish(const char* topic, const char* payload, boolean retained);
+       PublishInternal(statusTopic.c_str(), ONLINE_MESSAGE, true);
      }
      else
      {
