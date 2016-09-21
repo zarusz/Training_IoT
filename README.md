@@ -21,12 +21,12 @@ If any questions please email me.
 #### Software
 
 Ensure you have installed:
-* [PlatformIO](http://platformio.org/) IDE for the IoT device
+* [PlatformIO](http://platformio.org/) IDE (for the IoT device)
 	* Download from: http://platformio.org/platformio-ide
 	* Also follow the [installation guide](http://docs.platformio.org/en/stable/ide/atom.html#installation)
 		* Ensure you install *clang* to have code completion.
 		* Ensure you install Python.
-* [Visual Studio 2015 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) IDE for the control app
+* [Visual Studio 2015 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) IDE (for the control app)
 
 Windows PC is required.
 
@@ -55,17 +55,6 @@ The training requires parts:
 	* 4x 220&#937; resistor
 	* 1x 100&#937; resistor
 * Computer (PC, MAC?)
-
-## Notes
-
-* Schematics are prepared using [Fritzing](http://fritzing.org/home/).
-
-##### License
-TBD
-
-##### Legal Notes
-1. This material is provided as is.
-2. The author is not responsible for any damage this might cause ;-)
 
 ## Essentials
 
@@ -130,3 +119,14 @@ ToDo: Need image ESP8266 PINs
 ## Extras
 
 [Additional information](20_Extras.md)
+
+## Notes
+
+* Schematics are prepared using [Fritzing](http://fritzing.org/home/).
+
+##### License
+TBD
+
+##### Legal Notes
+1. This material is provided as is.
+2. The author is not responsible for any damage this might cause ;-)
