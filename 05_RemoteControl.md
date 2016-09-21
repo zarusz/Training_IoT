@@ -49,7 +49,6 @@ The web app also has a simple [user interface](http://iot-remotecontrolapp.azure
 
 ![](assets/05_control_webapp.png "Control user interface for my_device_id")
 
-
 The web app is not that interesting, so let's move on to the client device (ESP).
 
 #### Client device (`05_RemoteControl`)

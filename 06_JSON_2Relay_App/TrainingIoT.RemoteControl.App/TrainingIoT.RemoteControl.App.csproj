@@ -238,6 +238,8 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="Comm\Mqtt\IBackgroundService.cs" />
     <Compile Include="Comm\Mqtt\MqttAdapter.cs" />
+    <Compile Include="Domain\IrInFeature.cs" />
+    <Compile Include="Domain\IrOutFeature.cs" />
     <Compile Include="Handlers\DeviceDescriptionEventHandler.cs" />
     <Compile Include="Domain\MotionSensorFeature.cs" />
     <Compile Include="ErrorLogging\LoggingHandleErrorAttribute.cs" />
@@ -261,6 +263,7 @@
     <Compile Include="Domain\TemperatureSensorFeature.cs" />
     <Compile Include="Messages\DeviceDescriptionEvent.cs" />
     <Compile Include="Messages\HumiditySensorFeatureEvent.cs" />
+    <Compile Include="Messages\IrOutFeatureCommand.cs" />
     <Compile Include="Messages\MotionSensorFeatureEvent.cs" />
     <Compile Include="Messages\SensorFeatureEvent.cs" />
     <Compile Include="Messages\SwitchFeatureCommand.cs" />
@@ -285,6 +288,7 @@
     <Compile Include="Models\FeatureModel.cs" />
     <Compile Include="Models\HumiditySensorFeatureModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\IrOutFeatureModel.cs" />
     <Compile Include="Models\LedFeatureModel.cs" />
     <Compile Include="Models\MotionSensorFeatureModel.cs" />
     <Compile Include="Models\SwitchFeatureModel.cs" />
@@ -337,6 +341,7 @@
     <Content Include="Views\RemoteControl\TemperatureSensorFeature.cshtml" />
     <Content Include="Views\RemoteControl\HumiditySensorFeature.cshtml" />
     <Content Include="Views\RemoteControl\MotionSensorFeature.cshtml" />
+    <None Include="Views\RemoteControl\IrOutFeature.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

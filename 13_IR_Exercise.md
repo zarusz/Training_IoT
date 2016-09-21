@@ -24,7 +24,7 @@ When the device starts it publishes the device description:
 ```
 [MainApp] Sending DeviceDescription...
 [MQTT] Publish to topic: 'register', message: '{"deviceId":"my_device_id","features":[{"port":4,"type":"switch"},{"port":5,"type":"switch"},{"port":1,"type":"led"},
-{"port":6,"type":"temperatureSensor"},{"port":6,"type":"humiditySensor"},{"port":7,"type":"motionSensor"},{"port":8,"type":"ir_in"},{"port":9,"type":"ir_out"}]}'
+{"port":6,"type":"temperatureSensor"},{"port":6,"type":"humiditySensor"},{"port":7,"type":"motionSensor"},{"port":8,"type":"irIn"},{"port":9,"type":"irOut"}]}'
 ```
 
 When POWER button is pressed on the LED remote, our device outputs:

@@ -30,6 +30,10 @@
         {
             @Html.Partial("MotionSensorFeature", (MotionSensorFeatureModel) feature)
         }
+        else if (feature.Type == FeatureType.IrOut)
+        {
+            @Html.Partial("IrOutFeature", (IrOutFeatureModel)feature)
+        }
     }
 </form>
 

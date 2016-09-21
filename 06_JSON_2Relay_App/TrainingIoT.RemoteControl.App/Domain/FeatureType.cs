@@ -6,6 +6,8 @@ namespace TrainingIoT.RemoteControl.App.Domain
         Led,
         TemperatureSensor,
         HumiditySensor,
-        MotionSensor
+        MotionSensor,
+        IrIn,
+        IrOut
     }
 }

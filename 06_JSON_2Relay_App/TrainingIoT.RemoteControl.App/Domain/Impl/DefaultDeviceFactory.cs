@@ -27,19 +27,25 @@ namespace TrainingIoT.RemoteControl.App.Domain.Impl
             switch (f.Type)
             {
                 case FeatureType.Switch:
-                    return new SwitchFeature(device, f.Type, f.Port);
+                    return new SwitchFeature(device, f.Port);
 
                 case FeatureType.Led:
-                    return new LedFeature(device, f.Type, f.Port);
+                    return new LedFeature(device, f.Port);
 
                 case FeatureType.TemperatureSensor:
-                    return new TemperatureSensorFeature(device, f.Type, f.Port);
+                    return new TemperatureSensorFeature(device, f.Port);
 
                 case FeatureType.HumiditySensor:
-                    return new HumiditySensorFeature(device, f.Type, f.Port);
+                    return new HumiditySensorFeature(device, f.Port);
 
                 case FeatureType.MotionSensor:
-                    return new MotionSensorFeature(device, f.Type, f.Port);
+                    return new MotionSensorFeature(device, f.Port);
+
+                case FeatureType.IrOut:
+                    return new IrOutFeature(device, f.Port);
+
+                case FeatureType.IrIn:
+                    return new IrInFeature(device, f.Port);
             }
 
             throw new NotSupportedException($"The feature type {f.Type} is not supported.");

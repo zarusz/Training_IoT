@@ -1,6 +1,6 @@
 #include "IRInFeatureController.h"
 
-#define FEATURE_TYPE_IR_IN "ir_in"
+#define FEATURE_TYPE_IR_IN "irIn"
 
 IRInFeatureController::IRInFeatureController(int port, DeviceContext* context, int pin)
   : FeatureController(port, FEATURE_TYPE_IR_IN, context),

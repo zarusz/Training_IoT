@@ -32,6 +32,9 @@ namespace TrainingIoT.RemoteControl.App
 
             cfg.CreateMap<MotionSensorFeature, MotionSensorFeatureModel>()
                 .IncludeBase<DeviceFeature, FeatureModel>();
+
+            cfg.CreateMap<IrOutFeature, IrOutFeatureModel>()
+                .IncludeBase<DeviceFeature, FeatureModel>();
         }
 
     }

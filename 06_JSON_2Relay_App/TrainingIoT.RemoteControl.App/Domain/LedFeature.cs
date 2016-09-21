@@ -2,8 +2,8 @@ namespace TrainingIoT.RemoteControl.App.Domain
 {
     public class LedFeature : SwitchFeature
     {
-        public LedFeature(Device device, FeatureType type, int port) 
-            : base(device, type, port)
+        public LedFeature(Device device, int port)
+            : base(device, FeatureType.Switch, port)
         {
         }
     }

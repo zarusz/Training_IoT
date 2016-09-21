@@ -1,6 +1,6 @@
 #include "IROutFeatureController.h"
 
-#define FEATURE_TYPE_IR_OUT "ir_out"
+#define FEATURE_TYPE_IR_OUT "irOut"
 
 IROutFeatureController::IROutFeatureController(int port, DeviceContext* context, int pin)
   : FeatureController(port, FEATURE_TYPE_IR_OUT, context),

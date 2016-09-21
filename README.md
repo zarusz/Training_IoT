@@ -98,7 +98,13 @@ More details are provided on the [ESP Arduino wiki](https://github.com/esp8266/A
 
 #### Layout
 
-ToDo: Need image ESP8266 PINs
+The ESP8266 12E looks like this:
+
+![](assets/esp_12E.jpg)
+
+During the workshop we are sing a breadboard adapter:
+
+![](assets/ESP8266_Adapter.png)
 
 ## Instructions
 

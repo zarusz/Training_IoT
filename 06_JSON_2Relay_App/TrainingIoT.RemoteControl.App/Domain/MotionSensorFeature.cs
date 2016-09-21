@@ -7,8 +7,8 @@ namespace TrainingIoT.RemoteControl.App.Domain
         public bool Motion { get; set; }
         public DateTime Updated { get; set; }
 
-        public MotionSensorFeature(Device device, FeatureType type, int port)
-            : base(device, type, port)
+        public MotionSensorFeature(Device device, int port)
+            : base(device, FeatureType.MotionSensor, port)
         {
         }
 

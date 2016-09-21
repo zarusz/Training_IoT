@@ -11,7 +11,7 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace TrainingIoT.RemoteControl.App.Comm.Mqtt
 {
-    public class MqttAdapter : IBackgroundService, IDisposable, IHandles<SwitchFeatureCommand>
+    public class MqttAdapter : IBackgroundService, IDisposable, IHandles<SwitchFeatureCommand>, IHandles<IrOutFeatureCommand>
     {
         public const string TopicSensor = "sensor";
         public const string TopicRegister = "register";
@@ -112,6 +112,16 @@ namespace TrainingIoT.RemoteControl.App.Comm.Mqtt
             var payload = SerializeMessage(message);
             _client.Publish(message.DeviceId, payload);
 
+        }
+
+        #endregion
+
+        #region Implementation of IHandles<in IrOutFeatureCommand>
+
+        public void Handle(IrOutFeatureCommand message)
+        {
+            var payload = SerializeMessage(message);
+            _client.Publish(message.DeviceId, payload);
         }
 
         #endregion
