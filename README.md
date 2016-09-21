@@ -3,7 +3,8 @@
 Workshop materials for the IoT hand-on training. The training is based on the [ESP8266](http://espressif.com/en/products/hardware/esp8266ex/overview) chip and [Arduino](https://github.com/esp8266/Arduino) framework.
 The training was first done at the [TWF 2016 Conference](http://twf.community).
 
-The idea behind the workshop is to have a step-by-step tutorial on building *Internet of Things (IoT)* solutions. The initial exercses are simple and evolve over time.
+The idea behind the workshop is to have a step-by-step tutorial on building *Internet of Things (IoT)* solutions.
+The initial exercises are simple and evolve over time.
 
 If any questions please email me.
 
@@ -21,9 +22,13 @@ If any questions please email me.
 
 Ensure you have installed:
 * [PlatformIO](http://platformio.org/) IDE for the IoT device
-	* Here is the [installation guide](http://docs.platformio.org/en/stable/ide/atom.html#installation).
-	* Ensure you install *clang* to have code completion.
+	* Download from: http://platformio.org/platformio-ide
+	* Also follow the [installation guide](http://docs.platformio.org/en/stable/ide/atom.html#installation)
+		* Ensure you install *clang* to have code completion.
+		* Ensure you install Python.
 * [Visual Studio 2015 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) IDE for the control app
+
+Windows PC is required.
 
 #### Hardware Checklist
 
@@ -64,14 +69,33 @@ TBD
 
 ## Essentials
 
-### Boot Modes
+### PlatformIO
+
+Most important commands in PlatformIO:
+* **Serial Monitor**
+	* PlatformIO > Serial Monitor
+	* Shortcut: **Alt+Shift+M**
+* **Build**
+	* PlatformIO > Build
+	* Shortcut: **Alt+Ctrl+B**
+* **Upload**
+	* PlatformIO > Upload
+	* Shortcut: **Alt+Ctrl+U**
+
+
+### ESP8266
+
+#### Boot Modes
 Whenever the ESP is reset or powered on it checks the state of three GPIO pins to enter one of the boot modes:
 
 GPIO15|GPIO0|GPIO2|Mode
 ------|-----|-----|----
-    0V|   0V| 3.3V|UART Bootloader
-    0V| 3.3V| 3.3V|Boot sketch
-  3.3V|    x|    x|SDIO mode (not used for Arduino)
+   LOW|  LOW| HIGH|UART Bootloader
+   LOW| HIGH| HIGH|Boot sketch
+  HIGH|    x|    x|SDIO mode (not used for Arduino)
+
+* LOW = connected to GND
+* HIGH = connected to 3.3V
 
 The *UART Bootloader* mode is used to upload our program.
 The *Boot sketch* mode is used to execute our program (normal mode).
@@ -82,6 +106,10 @@ rst cause:2, boot mode:(3,6)
 ```
 
 More details are provided on the [ESP Arduino wiki](https://github.com/esp8266/Arduino/blob/master/doc/boards.md#boot-messages-and-modes).
+
+#### Layout
+
+ToDo: Need image ESP8266 PINs
 
 ## Instructions
 
