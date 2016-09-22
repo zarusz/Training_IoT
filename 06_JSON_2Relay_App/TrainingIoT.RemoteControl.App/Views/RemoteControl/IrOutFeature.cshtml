@@ -2,7 +2,7 @@
 <div class="form-group">
     <label class="col-sm-2 control-label">IR Remote</label>
     <div class="col-sm-10">
-        @Html.ActionLink("POWER", "SendIr", new { id = Model.DeviceId, port = Model.Port, codeType = "NEC", data = "FF18E7:32|FFFFFFFF:0" }, new { @class = "btn btn-default btn-lg" })
+        @Html.ActionLink("POWER", "SendIr", new { id = Model.DeviceId, port = Model.Port, codeType = "NEC", data = "FF02FD:32|FFFFFFFF:0" }, new { @class = "btn btn-default btn-lg" })
         @Html.ActionLink("Red", "SendIr", new { id = Model.DeviceId, port = Model.Port, codeType = "NEC", data = "FF1AE5:32|FFFFFFFF:0" }, new { @class = "btn btn-default btn-lg" })
         @Html.ActionLink("Green", "SendIr", new { id = Model.DeviceId, port = Model.Port, codeType = "NEC", data = "FF9A65:32|FFFFFFFF:0" }, new { @class = "btn btn-default btn-lg" })
         @Html.ActionLink("Blue", "SendIr", new { id = Model.DeviceId, port = Model.Port, codeType = "NEC", data = "FFA25D:32|FFFFFFFF:0" }, new { @class = "btn btn-default btn-lg" })

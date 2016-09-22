@@ -38,7 +38,7 @@ MainApp::MainApp()
 
 	_features.push_back(new LedFeatureController(1, this, 13));
 	_features.push_back(new LedFeatureController(2, this, 12));
-	_features.push_back(new LedFeatureController(3, this, 14));
+	_features.push_back(new LedFeatureController(3, this, 16));
 }
 
 MainApp::~MainApp()

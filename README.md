@@ -122,6 +122,11 @@ During the workshop we are sing a breadboard adapter:
 * [12_IR](12_IR.md)
 * [13_IR_Exercise](13_IR_Exercise.md)
 
+## Worth investigating
+
+* [Eclipse SmartHome](https://www.eclipse.org/smarthome/index.html) project
+* [Eclipse IoT](http://iot.eclipse.org/) technology hub
+
 ## Extras
 
 [Additional information](20_Extras.md)
