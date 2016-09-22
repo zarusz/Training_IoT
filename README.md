@@ -100,7 +100,7 @@ More details are provided on the [ESP Arduino wiki](https://github.com/esp8266/A
 
 The ESP8266 12E looks like this:
 
-![](assets/esp_12E.jpg)
+![](assets/esp_12E.png)
 
 During the workshop we are sing a breadboard adapter:
 
